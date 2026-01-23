@@ -30,6 +30,10 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  // Configuración para evitar errores de tracing en Vercel
+  outputFileTracingIncludes: {
+    '/*': ['./public/**/*'],
+  },
 }
 
 module.exports = nextConfig
