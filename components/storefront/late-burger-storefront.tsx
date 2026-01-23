@@ -16,8 +16,8 @@ interface LateBurgerStorefrontProps {
 }
 
 // Late Burger Official Brand Colors
-const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue (Background & Buttons)
-const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow (Prices & Text)
+const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue (Background, Buttons & Prices)
+const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow (Text & Accents)
 
 export function LateBurgerStorefront({ tenant, products }: LateBurgerStorefrontProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)

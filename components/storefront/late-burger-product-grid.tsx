@@ -5,8 +5,8 @@ import Image from 'next/image'
 import type { Product } from '@/types/database'
 
 // Late Burger Official Brand Colors
-const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue
-const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow
+const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue (Background, Buttons & Prices)
+const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow (Text & Accents)
 
 interface LateBurgerProductGridProps {
   products: Product[]
@@ -107,7 +107,7 @@ export function LateBurgerProductGrid({ products, onProductClick }: LateBurgerPr
             <div className="flex items-center justify-between">
               <span
                 className="text-2xl md:text-3xl font-bold"
-                style={{ color: LATE_BURGER_SECONDARY }}
+                style={{ color: LATE_BURGER_PRIMARY }}
               >
                 {formatPrice(product.price)}
               </span>
