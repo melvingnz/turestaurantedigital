@@ -1,6 +1,7 @@
 'use client'
 
 import { ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
 import type { Tenant } from '@/types/database'
 import { useCart } from './cart-context'
 
@@ -31,12 +32,16 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
             {/* Logo and Name */}
             <div className="flex items-center gap-3">
               {tenant.logo_url ? (
-                <img
-                  src={tenant.logo_url}
-                  alt={tenant.name}
-                  className="h-12 w-12 md:h-14 md:w-14 object-contain rounded-lg drop-shadow-lg"
-                  loading="eager"
-                />
+                <div className="relative h-12 w-12 md:h-14 md:w-14 rounded-lg overflow-hidden drop-shadow-lg">
+                  <Image
+                    src={tenant.logo_url}
+                    alt={tenant.name}
+                    fill
+                    className="object-contain"
+                    sizes="56px"
+                    priority
+                  />
+                </div>
               ) : (
                 <div
                   className="h-12 w-12 md:h-14 md:w-14 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl"
@@ -94,11 +99,15 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
             {/* Logo and Name */}
             <div className="flex items-center gap-3">
               {tenant.logo_url ? (
-                <img
-                  src={tenant.logo_url}
-                  alt={tenant.name}
-                  className="h-12 w-12 md:h-14 md:w-14 object-contain"
-                />
+                <div className="relative h-12 w-12 md:h-14 md:w-14 rounded-lg overflow-hidden">
+                  <Image
+                    src={tenant.logo_url}
+                    alt={tenant.name}
+                    fill
+                    className="object-contain"
+                    sizes="56px"
+                  />
+                </div>
               ) : (
                 <div
                   className="h-12 w-12 md:h-14 md:w-14 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl"
@@ -152,11 +161,15 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
           {/* Logo and Name */}
           <div className="flex items-center gap-3">
             {tenant.logo_url ? (
-              <img
-                src={tenant.logo_url}
-                alt={tenant.name}
-                className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-lg"
-              />
+              <div className="relative h-10 w-10 md:h-12 md:w-12 rounded-lg overflow-hidden">
+                <Image
+                  src={tenant.logo_url}
+                  alt={tenant.name}
+                  fill
+                  className="object-contain"
+                  sizes="48px"
+                />
+              </div>
             ) : (
               <div
                 className="h-10 w-10 md:h-12 md:w-12 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl"

@@ -1,6 +1,7 @@
 'use client'
 
 import { ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
 import type { Tenant } from '@/types/database'
 import { useCart } from './cart-context'
 
@@ -17,11 +18,15 @@ export function Navbar({ tenant }: NavbarProps) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             {tenant.logo_url ? (
-              <img
-                src={tenant.logo_url}
-                alt={tenant.name}
-                className="h-10 w-10 object-cover rounded"
-              />
+              <div className="relative h-10 w-10 rounded overflow-hidden">
+                <Image
+                  src={tenant.logo_url}
+                  alt={tenant.name}
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
+              </div>
             ) : null}
             <h1 className="text-xl font-bold text-gray-900">{tenant.name}</h1>
           </div>

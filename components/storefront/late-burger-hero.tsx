@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { ArrowDown } from 'lucide-react'
+import Image from 'next/image'
 import type { Product } from '@/types/database'
 
 // Late Burger Official Brand Colors
@@ -18,10 +19,13 @@ export function LateBurgerHero({ product }: LateBurgerHeroProps) {
       {/* Banner Background */}
       <div className="absolute inset-0 z-0">
         {/* Banner Image - Sin overlays para mostrar el banner completo */}
-        <img
+        <Image
           src="/images/Banner_Pidebot_x3.jpg"
           alt="Late Burger Banner"
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
         />
       </div>
 

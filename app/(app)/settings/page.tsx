@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -264,14 +265,17 @@ export default function SettingsPage() {
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center gap-3 mb-4">
               {formData.logo_url ? (
-                <img
-                  src={formData.logo_url}
-                  alt={formData.name}
-                  className="h-10 w-10 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
+                <div className="relative h-10 w-10">
+                  <Image
+                    src={formData.logo_url}
+                    alt={formData.name}
+                    fill
+                    className="object-contain"
+                    sizes="40px"
+                    onError={() => {
+                      // Error handling is done by Next.js Image component
+                    }}
+                  />
               ) : (
                 <div
                   className="h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold"

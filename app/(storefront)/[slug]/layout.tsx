@@ -17,7 +17,7 @@ export default async function StorefrontLayout({
   if (isLateBurger) {
     return (
       <CartProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen" style={{ backgroundColor: '#0FA8D8' }}>
           <main>{children}</main>
         </div>
       </CartProvider>

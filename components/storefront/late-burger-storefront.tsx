@@ -16,8 +16,8 @@ interface LateBurgerStorefrontProps {
 }
 
 // Late Burger Official Brand Colors
-const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue
-const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow
+const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue (Background & Buttons)
+const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow (Prices & Text)
 
 export function LateBurgerStorefront({ tenant, products }: LateBurgerStorefrontProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
@@ -83,8 +83,8 @@ export function LateBurgerStorefront({ tenant, products }: LateBurgerStorefrontP
       {/* Cart Button (Floating) */}
       <CartButton 
         onClick={() => setIsCartOpen(true)} 
-        primaryColor={LATE_BURGER_SECONDARY}
-        textColor={LATE_BURGER_PRIMARY}
+        primaryColor={LATE_BURGER_PRIMARY}
+        textColor="#FFFFFF"
       />
 
       {/* Cart Sheet */}

@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Configuración de imágenes para Next.js Image
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+    ],
+    unoptimized: false,
+  },
   // Deshabilitar proxy durante desarrollo para permitir Google Fonts
   async headers() {
     return []

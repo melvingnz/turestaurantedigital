@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus, Image as ImageIcon } from 'lucide-react'
+import Image from 'next/image'
 import type { Product } from '@/types/database'
 
 // Late Burger Official Brand Colors
@@ -55,10 +56,12 @@ export function LateBurgerProductGrid({ products, onProductClick }: LateBurgerPr
           {/* Image Container */}
           <div className="relative w-full h-64 md:h-72 overflow-hidden bg-gray-100">
             {product.image_url ? (
-              <img
+              <Image
                 src={product.image_url}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -104,7 +107,7 @@ export function LateBurgerProductGrid({ products, onProductClick }: LateBurgerPr
             <div className="flex items-center justify-between">
               <span
                 className="text-2xl md:text-3xl font-bold"
-                style={{ color: LATE_BURGER_PRIMARY }}
+                style={{ color: LATE_BURGER_SECONDARY }}
               >
                 {formatPrice(product.price)}
               </span>
