@@ -34,21 +34,29 @@ export function validateSlug(slug: string): { valid: boolean; error?: string; no
 
 /**
  * Generar URL de storefront usando subdominio
+ * Funciona tanto en Server Components como Client Components
  * @param slug - Slug del restaurante (ej: 'lateburger')
  * @returns URL completa con subdominio
  */
 export function getStorefrontUrl(slug: string): string {
-  // En desarrollo: usar localhost con subdominio
+  // Client-side: usar window.location para detectar el entorno actual
   if (typeof window !== 'undefined') {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    const hostname = window.location.hostname
     const port = window.location.port ? `:${window.location.port}` : ''
+    const protocol = window.location.protocol
     
-    if (isLocalhost) {
-      return `http://${slug}.localhost${port}`
+    // Si estamos en localhost, usar subdominio de localhost
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `${protocol}//${slug}.localhost${port}`
+    }
+    
+    // Si ya estamos en un subdominio del dominio de producción, mantener el protocolo
+    if (hostname.includes('turestaurantedigital.com')) {
+      return `${protocol}//${slug}.turestaurantedigital.com`
     }
   }
 
-  // Verificar si estamos en desarrollo usando process.env
+  // Server-side: usar variables de entorno
   const isDevelopment = process.env.NODE_ENV === 'development'
   if (isDevelopment) {
     // En desarrollo, asumir que estamos en localhost:3000
