@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 export default function MarketingLayout({
@@ -5,5 +7,5 @@ export default function MarketingLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div className="min-h-screen bg-white">{children}</div>
+  return <>{children}</>
 }
