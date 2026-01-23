@@ -3,8 +3,12 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { HeroMockup } from './hero-mockup'
 import Link from 'next/link'
+import { getStorefrontUrl } from '@/lib/utils'
 
 export function Hero() {
+  // Generate storefront URL using subdomain architecture
+  const lateBurgerUrl = getStorefrontUrl('lateburger')
+
   return (
     <section className="w-full bg-white py-12 sm:py-20 lg:py-32">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +26,7 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link href="/signup">
+              <Link href="/marketing/signup">
                 <Button 
                   size="lg" 
                   className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white rounded-md px-8 py-6 text-base font-semibold"
@@ -30,7 +34,11 @@ export function Hero() {
                   Ver Planes
                 </Button>
               </Link>
-              <Link href="/lateburger">
+              <a 
+                href={lateBurgerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -39,7 +47,7 @@ export function Hero() {
                   <ArrowRight className="mr-2 h-5 w-5" />
                   Ver Menú de Ejemplo
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
 

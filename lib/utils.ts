@@ -31,3 +31,31 @@ export function validateSlug(slug: string): { valid: boolean; error?: string; no
 
   return { valid: true, normalized }
 }
+
+/**
+ * Generar URL de storefront usando subdominio
+ * @param slug - Slug del restaurante (ej: 'lateburger')
+ * @returns URL completa con subdominio
+ */
+export function getStorefrontUrl(slug: string): string {
+  // En desarrollo: usar localhost con subdominio
+  if (typeof window !== 'undefined') {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    const port = window.location.port ? `:${window.location.port}` : ''
+    
+    if (isLocalhost) {
+      return `http://${slug}.localhost${port}`
+    }
+  }
+
+  // Verificar si estamos en desarrollo usando process.env
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  if (isDevelopment) {
+    // En desarrollo, asumir que estamos en localhost:3000
+    return `http://${slug}.localhost:3000`
+  }
+
+  // En producción: usar subdominio del dominio principal
+  const productionDomain = process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'turestaurantedigital.com'
+  return `https://${slug}.${productionDomain}`
+}

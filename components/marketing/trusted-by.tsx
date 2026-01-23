@@ -2,12 +2,15 @@
 
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { getStorefrontUrl } from '@/lib/utils'
 
 // Late Burger Brand Colors
 const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue
 
 export function TrustedBy() {
+  // Generate storefront URL using subdomain architecture
+  const lateBurgerUrl = getStorefrontUrl('lateburger')
+
   return (
     <section className="w-full bg-gray-50 py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,8 +21,10 @@ export function TrustedBy() {
           
           {/* Late Burger - Featured Case Study */}
           <div className="max-w-4xl mx-auto mb-12">
-            <Link 
-              href="/lateburger"
+            <a 
+              href={lateBurgerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group block bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-opacity-100"
               style={{
                 borderColor: 'transparent',
@@ -83,7 +88,7 @@ export function TrustedBy() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </a>
           </div>
 
           {/* Other Restaurant Types */}
