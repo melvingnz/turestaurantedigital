@@ -6,6 +6,13 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
   const pathname = url.pathname
 
+  // DEBUG: Log middleware execution
+  console.log('[MIDDLEWARE]', {
+    hostname,
+    pathname,
+    userAgent: request.headers.get('user-agent')?.substring(0, 50),
+  })
+
   // ============================================
   // LOCALHOST HANDLING (WITH SUBDOMAIN SUPPORT)
   // ============================================
@@ -84,19 +91,55 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
-  // Handle storefront subdomains: [slug].turestaurantedigital.com -> /storefront/[slug]
+  // Handle storefront subdomains: [slug].turestaurantedigital.com -> /(storefront)/[slug]
   // Extract subdomain from production domain
   const productionDomain = 'turestaurantedigital.com'
-  if (hostname.endsWith(`.${productionDomain}`) || hostname.endsWith(`.${productionDomain}:${url.port || ''}`)) {
+  
+  // Remove port if present for comparison
+  const hostnameWithoutPort = hostname.split(':')[0]
+  
+  // Check if hostname matches subdomain pattern: [slug].turestaurantedigital.com
+  if (hostnameWithoutPort.endsWith(`.${productionDomain}`)) {
     // Extract subdomain: lateburger.turestaurantedigital.com -> lateburger
-    const subdomain = hostname.split('.')[0]
+    const parts = hostnameWithoutPort.split('.')
+    const subdomain = parts[0]
+    
+    console.log('[MIDDLEWARE] Subdomain detection:', {
+      hostname,
+      hostnameWithoutPort,
+      productionDomain,
+      parts,
+      extractedSubdomain: subdomain,
+      pathname,
+    })
     
     // Validate subdomain (must not be reserved)
-    if (subdomain && subdomain !== 'www' && subdomain !== 'app' && subdomain !== 'turestaurantedigital') {
-      // Rewrite to /storefront/[slug] maintaining the pathname
-      url.pathname = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
+    const reservedSubdomains = ['www', 'app', 'turestaurantedigital', 'api']
+    if (subdomain && !reservedSubdomains.includes(subdomain.toLowerCase())) {
+      // Rewrite to /(storefront)/[slug] - Next.js route groups use parentheses
+      // But the actual path should be /storefront/[slug] for the rewrite
+      const newPath = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
+      console.log('[MIDDLEWARE] Rewriting subdomain to storefront:', {
+        from: pathname,
+        to: newPath,
+        subdomain,
+        originalHostname: hostname,
+      })
+      url.pathname = newPath
       return NextResponse.rewrite(url)
+    } else {
+      console.log('[MIDDLEWARE] Subdomain is reserved, skipping:', {
+        subdomain,
+        reservedSubdomains,
+      })
     }
+  } else {
+    console.log('[MIDDLEWARE] Not a subdomain match:', {
+      hostname,
+      hostnameWithoutPort,
+      productionDomain,
+      endsWith: hostnameWithoutPort.endsWith(`.${productionDomain}`),
+    })
   }
 
   // Default: allow through
