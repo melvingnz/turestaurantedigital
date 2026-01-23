@@ -171,6 +171,8 @@ El middleware (`middleware.ts`) maneja el routing automático:
 - `lateburger.turestaurantedigital.com` → Storefront de Late Burger (subdominio)
 - `app.turestaurantedigital.com` → Portal de Administración
 
+**⚠️ IMPORTANTE**: Si ves el error `DNS_PROBE_FINISHED_NXDOMAIN` al acceder a un subdominio, necesitas configurar el DNS. Ver `VERCEL_SUBDOMAIN_SETUP.md` para instrucciones detalladas.
+
 ### Supabase Storage
 
 Configura los buckets necesarios:
@@ -333,6 +335,20 @@ Ver `ROADMAP.md` para el roadmap completo y detallado del proyecto.
 - **Aislamiento de datos**: Cada restaurante solo accede a sus propios datos
 
 ## 🐛 Troubleshooting
+
+### Error DNS_PROBE_FINISHED_NXDOMAIN (Subdominio no resuelve)
+
+Si al acceder a `lateburger.turestaurantedigital.com` ves este error, significa que el DNS no está configurado.
+
+**Solución rápida:**
+1. Ve a Vercel Dashboard → Settings → Domains
+2. Agrega `lateburger.turestaurantedigital.com`
+3. Configura el registro CNAME en tu proveedor DNS:
+   - Tipo: `CNAME`
+   - Nombre: `lateburger`
+   - Valor: `cname.vercel-dns.com`
+
+**Ver guía completa**: `VERCEL_SUBDOMAIN_SETUP.md`
 
 ### Error ENOENT en Vercel
 Si encuentras errores `ENOENT: no such file or directory, lstat '...page_client-reference-manifest.js'`, ver `FIX_VERCEL_ENOENT.md` para soluciones.
