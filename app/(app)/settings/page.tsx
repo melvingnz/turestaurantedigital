@@ -273,6 +273,7 @@ export default function SettingsPage() {
                     className="object-contain"
                     sizes="40px"
                   />
+                </div>
               ) : (
                 <div
                   className="h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold"
