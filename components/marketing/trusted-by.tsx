@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 // Late Burger Brand Colors
@@ -40,16 +41,13 @@ export function TrustedBy() {
                       className="w-28 h-28 md:w-32 md:h-32 rounded-2xl shadow-xl overflow-hidden ring-2 ring-white/20 flex items-center justify-center p-2"
                       style={{ backgroundColor: LATE_BURGER_PRIMARY }}
                     >
-                      <img 
+                      <Image 
                         src="/images/Logo_500x500.jpg" 
                         alt="Late Burger SDQ Logo" 
-                        className="w-full h-full object-contain"
-                        loading="eager"
-                        onError={(e) => {
-                          console.error('Logo failed to load:', e)
-                          // Fallback to show a placeholder
-                          e.currentTarget.style.display = 'none'
-                        }}
+                        fill
+                        className="object-contain"
+                        sizes="128px"
+                        priority
                       />
                     </div>
                     {/* Subtle glow on hover */}
