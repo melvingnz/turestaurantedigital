@@ -7,9 +7,28 @@ export function middleware(request: NextRequest) {
   const pathname = url.pathname
 
   // ============================================
-  // LOCALHOST HANDLING (NO DB CALLS - STATIC ROUTING)
+  // LOCALHOST HANDLING (WITH SUBDOMAIN SUPPORT)
   // ============================================
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+    // Handle subdomains in localhost: lateburger.localhost:3000 -> /storefront/lateburger
+    if (hostname.includes('.')) {
+      const parts = hostname.split('.')
+      const subdomain = parts[0]
+      
+      // Skip if it's just 'localhost' or '127.0.0.1'
+      if (subdomain && subdomain !== 'localhost' && subdomain !== '127' && subdomain !== '0' && subdomain !== '1') {
+        // lateburger.localhost:3000 -> /storefront/lateburger
+        url.pathname = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
+        return NextResponse.rewrite(url)
+      }
+    }
+    
+    // Handle direct routes: localhost:3000/lateburger -> /storefront/lateburger
+    if (pathname.startsWith('/lateburger')) {
+      url.pathname = `/storefront/lateburger${pathname.replace('/lateburger', '') || ''}`
+      return NextResponse.rewrite(url)
+    }
+    
     // Direct access to /app routes - allow through
     if (pathname.startsWith('/app')) {
       return NextResponse.next()
@@ -31,7 +50,7 @@ export function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // PRODUCTION DOMAIN HANDLING (STRING MATCHING ONLY)
+  // PRODUCTION DOMAIN HANDLING
   // ============================================
 
   // Handle app subdomain: app.turestaurantedigital.com -> /app/dashboard
@@ -49,6 +68,12 @@ export function middleware(request: NextRequest) {
     hostname === 'turestaurantedigital.com' ||
     hostname === 'www.turestaurantedigital.com'
   ) {
+    // Handle direct routes: turestaurantedigital.com/lateburger -> /storefront/lateburger
+    if (pathname.startsWith('/lateburger')) {
+      url.pathname = `/storefront/lateburger${pathname.replace('/lateburger', '') || ''}`
+      return NextResponse.rewrite(url)
+    }
+    
     url.pathname = `/marketing${pathname === '/' ? '' : pathname}`
     return NextResponse.rewrite(url)
   }
@@ -65,7 +90,7 @@ export function middleware(request: NextRequest) {
     const parts = hostname.split('.')
     const subdomain = parts[0]
     
-    // Skip if it's the main domain or www
+    // Skip if it's the main domain or www or app
     if (subdomain && subdomain !== 'turestaurantedigital' && subdomain !== 'www' && subdomain !== 'app') {
       url.pathname = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
       return NextResponse.rewrite(url)
