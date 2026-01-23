@@ -17,31 +17,23 @@ export function middleware(request: NextRequest) {
   // LOCALHOST HANDLING (WITH SUBDOMAIN SUPPORT)
   // ============================================
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-    // Handle subdomains in localhost: lateburger.localhost:3000 -> /storefront/lateburger
+    // Handle subdomains: lateburger.localhost:3000 -> /lateburger (app/(storefront)/[slug])
     if (hostname.includes('.')) {
       const parts = hostname.split('.')
       const subdomain = parts[0]
       
-      // Skip if it's just 'localhost' or '127.0.0.1'
       if (subdomain && subdomain !== 'localhost' && subdomain !== '127' && subdomain !== '0' && subdomain !== '1') {
-        // lateburger.localhost:3000 -> /storefront/lateburger
-        url.pathname = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
+        url.pathname = `/${subdomain}${pathname === '/' ? '' : pathname}`
         return NextResponse.rewrite(url)
       }
     }
     
-    // Handle direct routes: localhost:3000/lateburger -> /storefront/lateburger
+    // Direct /lateburger -> /lateburger (already matches [slug])
     if (pathname.startsWith('/lateburger')) {
-      url.pathname = `/storefront/lateburger${pathname.replace('/lateburger', '') || ''}`
-      return NextResponse.rewrite(url)
-    }
-    
-    // Direct access to /app routes - allow through
-    if (pathname.startsWith('/app')) {
       return NextResponse.next()
     }
-    // Direct access to /storefront routes - allow through
-    if (pathname.startsWith('/storefront')) {
+    
+    if (pathname.startsWith('/app')) {
       return NextResponse.next()
     }
     // Direct access to /marketing routes - allow through
@@ -75,10 +67,9 @@ export function middleware(request: NextRequest) {
     hostname === 'turestaurantedigital.com' ||
     hostname === 'www.turestaurantedigital.com'
   ) {
-    // Handle direct routes: turestaurantedigital.com/lateburger -> /storefront/lateburger
+    // /lateburger on apex -> /lateburger (app/(storefront)/[slug])
     if (pathname.startsWith('/lateburger')) {
-      url.pathname = `/storefront/lateburger${pathname.replace('/lateburger', '') || ''}`
-      return NextResponse.rewrite(url)
+      return NextResponse.next()
     }
     
     url.pathname = `/marketing${pathname === '/' ? '' : pathname}`
@@ -116,10 +107,9 @@ export function middleware(request: NextRequest) {
     // Validate subdomain (must not be reserved)
     const reservedSubdomains = ['www', 'app', 'turestaurantedigital', 'api']
     if (subdomain && !reservedSubdomains.includes(subdomain.toLowerCase())) {
-      // Rewrite to /(storefront)/[slug] - Next.js route groups use parentheses
-      // But the actual path should be /storefront/[slug] for the rewrite
-      const newPath = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
-      console.log('[MIDDLEWARE] Rewriting subdomain to storefront:', {
+      // Rewrite to /[slug]. app/(storefront)/[slug] maps to /[slug], NOT /storefront/[slug]
+      const newPath = `/${subdomain}${pathname === '/' ? '' : pathname}`
+      console.log('[MIDDLEWARE] Rewriting subdomain -> [slug]:', {
         from: pathname,
         to: newPath,
         subdomain,
@@ -149,12 +139,10 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Match all request paths except: api, _next/static, _next/image, favicon.ico
+     * Include / explicitly so subdomain root (lateburger.turestaurantedigital.com/) runs middleware
      */
+    '/',
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }
