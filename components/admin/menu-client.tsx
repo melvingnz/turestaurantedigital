@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
 import { ProductForm } from '@/components/admin/product-form'
-import { Plus, Edit, Trash2, Image as ImageIcon, UtensilsCrossed } from 'lucide-react'
+import { Plus, Edit, Eye, EyeOff, Image as ImageIcon, UtensilsCrossed, Filter } from 'lucide-react'
 import type { Product } from '@/types/database'
 
 interface MenuClientProps {
@@ -20,11 +20,14 @@ interface MenuClientProps {
   tenantId: string
 }
 
+type FilterType = 'all' | 'available' | 'unavailable'
+
 export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<FilterType>('all')
 
   const refreshProducts = async () => {
     setLoading(true)
@@ -57,25 +60,6 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
     }
   }
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) throw new Error('Failed to delete product')
-      
-      await refreshProducts()
-    } catch (error) {
-      console.error('Error deleting product:', error)
-      alert('Error al eliminar el producto')
-    }
-  }
-
   const handleEdit = (product: Product) => {
     setEditingProduct(product)
     setIsFormOpen(true)
@@ -97,6 +81,13 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
     }).format(price)
   }
 
+  // Filtrar productos según el filtro seleccionado
+  const filteredProducts = products.filter((product) => {
+    if (filter === 'available') return product.is_available
+    if (filter === 'unavailable') return !product.is_available
+    return true // 'all'
+  })
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -104,30 +95,70 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Gestión de Menú</h1>
           <p className="text-gray-600 mt-1">
-            Administra los productos de tu menú
+            Administra los productos de tu menú. Oculta productos temporalmente sin eliminarlos.
           </p>
         </div>
-        <Button onClick={handleNewProduct} className="bg-primary hover:bg-primary/90">
+        <Button onClick={handleNewProduct} className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90">
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Producto
         </Button>
       </div>
 
+      {/* Filters */}
+      <div className="flex items-center gap-2">
+        <Filter className="h-4 w-4 text-gray-500" />
+        <span className="text-sm font-medium text-gray-700">Filtrar:</span>
+        <Button
+          variant={filter === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setFilter('all')}
+          className={filter === 'all' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+        >
+          Todos ({products.length})
+        </Button>
+        <Button
+          variant={filter === 'available' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setFilter('available')}
+          className={filter === 'available' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+        >
+          Disponibles ({products.filter((p) => p.is_available).length})
+        </Button>
+        <Button
+          variant={filter === 'unavailable' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setFilter('unavailable')}
+          className={filter === 'unavailable' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+        >
+          Ocultos ({products.filter((p) => !p.is_available).length})
+        </Button>
+      </div>
+
       {/* Products Table */}
-      {products.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <div className="max-w-md mx-auto">
             <UtensilsCrossed className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No hay productos aún
+              {filter === 'all'
+                ? 'No hay productos aún'
+                : filter === 'available'
+                ? 'No hay productos disponibles'
+                : 'No hay productos ocultos'}
             </h3>
             <p className="text-gray-600 mb-6">
-              Comienza agregando tu primer producto al menú
+              {filter === 'all'
+                ? 'Comienza agregando tu primer producto al menú'
+                : filter === 'available'
+                ? 'Todos tus productos están ocultos actualmente'
+                : 'No tienes productos ocultos'}
             </p>
-            <Button onClick={handleNewProduct} className="bg-primary hover:bg-primary/90">
-              <Plus className="h-4 w-4 mr-2" />
-              Crear Primer Producto
-            </Button>
+            {filter === 'all' && (
+              <Button onClick={handleNewProduct} className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90">
+                <Plus className="h-4 w-4 mr-2" />
+                Crear Primer Producto
+              </Button>
+            )}
           </div>
         </div>
       ) : (
@@ -139,13 +170,16 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
                 <TableHead>Nombre</TableHead>
                 <TableHead>Categoría</TableHead>
                 <TableHead className="text-right">Precio</TableHead>
-                <TableHead className="text-center">Disponible</TableHead>
+                <TableHead className="text-center">Estado</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
+              {filteredProducts.map((product) => (
+                <TableRow
+                  key={product.id}
+                  className={!product.is_available ? 'opacity-60 bg-gray-50' : ''}
+                >
                   <TableCell>
                     {product.image_url ? (
                       <img
@@ -161,7 +195,14 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium text-gray-900">{product.name}</div>
+                      <div className="font-medium text-gray-900 flex items-center gap-2">
+                        {product.name}
+                        {!product.is_available && (
+                          <span className="text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded">
+                            Oculto
+                          </span>
+                        )}
+                      </div>
                       {product.description && (
                         <div className="text-sm text-gray-500 line-clamp-1">
                           {product.description}
@@ -178,10 +219,25 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
                     {formatPrice(product.price)}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Switch
-                      checked={product.is_available}
-                      onCheckedChange={() => handleToggleAvailability(product)}
-                    />
+                    <div className="flex items-center justify-center gap-2">
+                      <Switch
+                        checked={product.is_available}
+                        onCheckedChange={() => handleToggleAvailability(product)}
+                      />
+                      <span className="text-xs text-gray-500">
+                        {product.is_available ? (
+                          <span className="flex items-center gap-1 text-green-600">
+                            <Eye className="h-3 w-3" />
+                            Visible
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-gray-500">
+                            <EyeOff className="h-3 w-3" />
+                            Oculto
+                          </span>
+                        )}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -189,16 +245,9 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(product)}
+                        title="Editar producto"
                       >
                         <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(product.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -208,6 +257,26 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
           </Table>
         </div>
       )}
+
+      {/* Info Banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0">
+            <EyeOff className="h-5 w-5 text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-blue-900 mb-1">
+              ¿Sabías que puedes ocultar productos temporalmente?
+            </h4>
+            <p className="text-sm text-blue-700">
+              Usa el interruptor de "Disponible" para ocultar productos sin eliminarlos. Por
+              ejemplo, si hoy jueves no vendes un producto, ocúltalo. Mañana viernes puedes
+              volver a mostrarlo fácilmente. Los productos ocultos no aparecerán en tu storefront
+              pero permanecerán en tu base de datos.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Product Form */}
       <ProductForm

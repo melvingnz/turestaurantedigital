@@ -37,7 +37,7 @@ export function Navbar() {
               <Link href="/login">Iniciar Sesión</Link>
             </Button>
             <Button className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white" asChild>
-              <Link href="/register">Empezar Ahora</Link>
+              <Link href="/signup">Empezar Ahora</Link>
             </Button>
           </div>
         </div>
