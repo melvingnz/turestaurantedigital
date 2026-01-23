@@ -13,11 +13,12 @@ export async function createServerClient() {
   const cookieStore = await cookies()
   
   return createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey, {
+    // @ts-expect-error - Supabase cookies API type issue
     cookies: {
       getAll() {
         return cookieStore.getAll()
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options)

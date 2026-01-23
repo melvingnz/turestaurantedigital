@@ -269,7 +269,7 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
               ¿Sabías que puedes ocultar productos temporalmente?
             </h4>
             <p className="text-sm text-blue-700">
-              Usa el interruptor de "Disponible" para ocultar productos sin eliminarlos. Por
+              Usa el interruptor de &quot;Disponible&quot; para ocultar productos sin eliminarlos. Por
               ejemplo, si hoy jueves no vendes un producto, ocúltalo. Mañana viernes puedes
               volver a mostrarlo fácilmente. Los productos ocultos no aparecerán en tu storefront
               pero permanecerán en tu base de datos.

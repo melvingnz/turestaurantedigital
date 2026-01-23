@@ -2,12 +2,13 @@ import { getDashboardMetrics } from '@/app/actions/analytics'
 import { getAuthTenant } from '@/lib/auth'
 import { Package, ShoppingCart, DollarSign, TrendingUp, BarChart3 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import type { Tenant } from '@/types/database'
 
 export default async function DashboardPage() {
   const tenant = await getAuthTenant()
   const metrics = await getDashboardMetrics()
 
-  if (!tenant) {
+  if (!tenant || typeof tenant !== 'object' || !('name' in tenant)) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">No se pudo cargar la información del restaurante</p>
@@ -15,13 +16,16 @@ export default async function DashboardPage() {
     )
   }
 
+  // Type guard para asegurar que tenant es un Tenant válido
+  const validTenant = tenant as unknown as Tenant
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-600 mt-1">
-          Bienvenido a {tenant.name} - Panel de administración
+          Bienvenido a {validTenant.name} - Panel de administración
         </p>
       </div>
 

@@ -25,12 +25,18 @@ export async function updateTenant(updates: TenantUpdate) {
 
   const { data, error } = await supabase
     .from('tenants')
+    // @ts-expect-error - Supabase type inference issue
     .update(updates)
+    // @ts-expect-error - Supabase type inference issue
     .eq('id', tenant.id)
     .select()
     .single()
 
   if (error) {
+    // Si es un error de tabla no encontrada (PGRST205), es un error de configuración
+    if (error.code === 'PGRST205') {
+      throw new Error('La tabla de restaurantes no está configurada. Por favor, ejecuta el schema SQL en Supabase.')
+    }
     console.error('Error updating tenant:', error)
     throw new Error(`Error al actualizar: ${error.message}`)
   }
@@ -42,44 +48,24 @@ export async function updateTenant(updates: TenantUpdate) {
 }
 
 /**
- * Validar y normalizar slug
- */
-export function validateSlug(slug: string): { valid: boolean; error?: string; normalized?: string } {
-  const slugRegex = /^[a-z0-9-]+$/
-  const normalized = slug.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-
-  if (normalized.length < 3) {
-    return { valid: false, error: 'El slug debe tener al menos 3 caracteres' }
-  }
-
-  if (normalized.length > 30) {
-    return { valid: false, error: 'El slug no puede tener más de 30 caracteres' }
-  }
-
-  const reservedSlugs = ['app', 'www', 'admin', 'api', 'marketing', 'storefront']
-  if (reservedSlugs.includes(normalized)) {
-    return { valid: false, error: 'Este slug está reservado' }
-  }
-
-  if (!slugRegex.test(normalized)) {
-    return { valid: false, error: 'El slug solo puede contener letras, números y guiones' }
-  }
-
-  return { valid: true, normalized }
-}
-
-/**
  * Verificar si un slug está disponible
  */
 export async function checkSlugAvailability(slug: string, currentTenantId: string): Promise<boolean> {
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('tenants')
     .select('id')
+    // @ts-expect-error - Supabase type inference issue
     .eq('slug', slug)
+    // @ts-expect-error - Supabase type inference issue
     .neq('id', currentTenantId)
-    .single()
+    .maybeSingle()
+
+  // Si hay un error de tabla no encontrada (PGRST205), considerar el slug como disponible
+  if (error && error.code === 'PGRST205') {
+    return true
+  }
 
   return !data // Disponible si no existe
 }

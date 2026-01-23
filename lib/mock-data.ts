@@ -10,7 +10,7 @@ export const LATE_BURGER_TENANT: Tenant = {
   created_at: new Date().toISOString(),
   name: 'Late Burger',
   slug: 'lateburger',
-  logo_url: '/images/Logo_500x500_amarillo.jpg', // Official Late Burger Logo
+  logo_url: '/images/Logo_500x500.jpg', // Official Late Burger Logo
   brand_color: '#0FA8D8', // Official Brand Blue
   owner_id: 'mock-owner-id',
 }
@@ -26,6 +26,7 @@ export const LATE_BURGER_PRODUCTS: Product[] = [
     is_available: true,
     category: 'Hamburguesas',
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     id: 'mock-product-2',
@@ -37,6 +38,7 @@ export const LATE_BURGER_PRODUCTS: Product[] = [
     is_available: true,
     category: 'Hamburguesas',
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     id: 'mock-product-3',
@@ -48,6 +50,7 @@ export const LATE_BURGER_PRODUCTS: Product[] = [
     is_available: true,
     category: 'Hamburguesas',
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     id: 'mock-product-4',
@@ -59,6 +62,7 @@ export const LATE_BURGER_PRODUCTS: Product[] = [
     is_available: true,
     category: 'Hamburguesas',
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
 ]
 

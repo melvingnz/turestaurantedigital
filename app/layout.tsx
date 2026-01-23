@@ -2,7 +2,13 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+// Configurar Inter con fallback en caso de error de conexión
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "arial"],
+  adjustFontFallback: true,
+})
 
 export const metadata: Metadata = {
   title: "Tu Restaurante Digital",

@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { getCurrentTenant, updateTenant, validateSlug, checkSlugAvailability } from '@/app/actions/tenant'
+import { getCurrentTenant, updateTenant, checkSlugAvailability } from '@/app/actions/tenant'
+import { validateSlug } from '@/lib/utils'
 import { uploadLogo, deleteOldLogo } from '@/app/actions/storage'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { Loader2, Save, Palette, Building2, Globe } from 'lucide-react'
@@ -30,13 +31,14 @@ export default function SettingsPage() {
     async function loadTenant() {
       try {
         const data = await getCurrentTenant()
-        if (data) {
-          setTenant(data)
+        if (data && typeof data === 'object' && 'name' in data) {
+          const validTenant = data as unknown as { name: string; slug: string; logo_url: string | null; brand_color: string }
+          setTenant(validTenant)
           setFormData({
-            name: data.name || '',
-            slug: data.slug || '',
-            logo_url: data.logo_url || '',
-            brand_color: data.brand_color || '#FF5F1F',
+            name: validTenant.name || '',
+            slug: validTenant.slug || '',
+            logo_url: validTenant.logo_url || '',
+            brand_color: validTenant.brand_color || '#FF5F1F',
           })
         }
       } catch (err) {

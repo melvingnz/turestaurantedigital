@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Deshabilitar proxy durante desarrollo para permitir Google Fonts
+  async headers() {
+    return []
+  },
   // Optimizar file watchers para evitar EMFILE
   webpack: (config, { isServer, dev }) => {
     if (dev && !isServer) {

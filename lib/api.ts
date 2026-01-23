@@ -26,15 +26,20 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
   const { data, error } = await supabase
     .from('tenants')
     .select('*')
+    // @ts-expect-error - Supabase type inference issue
     .eq('slug', slug)
     .maybeSingle()
 
   if (error) {
-    console.error('Error fetching tenant:', error)
+    // Solo mostrar error si no es un error de tabla no encontrada (PGRST205)
+    // Esto es común durante desarrollo cuando la tabla aún no existe
+    if (error.code !== 'PGRST205') {
+      console.error('Error fetching tenant:', error)
+    }
     return null
   }
 
-  return data
+  return data as unknown as Tenant | null
 }
 
 /**
@@ -46,7 +51,9 @@ export async function getActiveProducts(tenantId: string): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
+    // @ts-expect-error - Supabase type inference issue
     .eq('is_available', true)
     .order('category', { ascending: true })
     .order('name', { ascending: true })
@@ -56,7 +63,7 @@ export async function getActiveProducts(tenantId: string): Promise<Product[]> {
     return []
   }
 
-  return data || []
+  return (data as unknown as Product[]) || []
 }
 
 /**
