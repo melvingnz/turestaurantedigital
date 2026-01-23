@@ -84,14 +84,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
-  // Handle other subdomains: [slug].turestaurantedigital.com -> /storefront/[slug]
-  // Only if it's not the main domain
-  if (hostname.includes('.')) {
-    const parts = hostname.split('.')
-    const subdomain = parts[0]
+  // Handle storefront subdomains: [slug].turestaurantedigital.com -> /storefront/[slug]
+  // Extract subdomain from production domain
+  const productionDomain = 'turestaurantedigital.com'
+  if (hostname.endsWith(`.${productionDomain}`) || hostname.endsWith(`.${productionDomain}:${url.port || ''}`)) {
+    // Extract subdomain: lateburger.turestaurantedigital.com -> lateburger
+    const subdomain = hostname.split('.')[0]
     
-    // Skip if it's the main domain or www or app
-    if (subdomain && subdomain !== 'turestaurantedigital' && subdomain !== 'www' && subdomain !== 'app') {
+    // Validate subdomain (must not be reserved)
+    if (subdomain && subdomain !== 'www' && subdomain !== 'app' && subdomain !== 'turestaurantedigital') {
+      // Rewrite to /storefront/[slug] maintaining the pathname
       url.pathname = `/storefront/${subdomain}${pathname === '/' ? '' : pathname}`
       return NextResponse.rewrite(url)
     }

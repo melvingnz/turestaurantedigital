@@ -11,7 +11,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left: Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/marketing" className="flex items-center">
             <Logo />
           </Link>
 
@@ -34,10 +34,10 @@ export function Navbar() {
           {/* Right: CTA Buttons */}
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
-              <Link href="/login">Iniciar Sesión</Link>
+              <Link href="/marketing/login">Iniciar Sesión</Link>
             </Button>
             <Button className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white" asChild>
-              <Link href="/signup">Empezar Ahora</Link>
+              <Link href="/marketing/signup">Empezar Ahora</Link>
             </Button>
           </div>
         </div>
