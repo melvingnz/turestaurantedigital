@@ -42,7 +42,7 @@ export function TrustedBy() {
                       style={{ backgroundColor: LATE_BURGER_PRIMARY }}
                     >
                       <Image 
-                        src="/images/Logo_500x500_amarillo.jpg" 
+                        src="/images/Logo_500x500.jpg" 
                         alt="Late Burger SDQ Logo" 
                         fill
                         className="object-contain"
