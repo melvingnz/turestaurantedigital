@@ -272,9 +272,6 @@ export default function SettingsPage() {
                     fill
                     className="object-contain"
                     sizes="40px"
-                    onError={() => {
-                      // Error handling is done by Next.js Image component
-                    }}
                   />
               ) : (
                 <div
