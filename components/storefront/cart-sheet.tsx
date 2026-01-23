@@ -22,9 +22,10 @@ interface CartSheetProps {
   onOpenChange: (open: boolean) => void
   tenantId: string
   onOrderSuccess: () => void
+  primaryColor?: string
 }
 
-export function CartSheet({ open, onOpenChange, tenantId, onOrderSuccess }: CartSheetProps) {
+export function CartSheet({ open, onOpenChange, tenantId, onOrderSuccess, primaryColor = '#FF5F1F' }: CartSheetProps) {
   const { items, updateQuantity, removeItem, totalPrice, clearCart } = useCart()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderType, setOrderType] = useState<OrderType>('delivery')
@@ -205,14 +206,15 @@ export function CartSheet({ open, onOpenChange, tenantId, onOrderSuccess }: Cart
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary">{formatPrice(totalPrice)}</span>
+                  <span style={{ color: primaryColor }}>{formatPrice(totalPrice)}</span>
                 </div>
               </div>
 
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-12 text-lg font-semibold bg-primary hover:bg-primary/90"
+                className="w-full h-12 text-lg font-semibold text-white hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: primaryColor }}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Procesando...' : 'Realizar Pedido'}

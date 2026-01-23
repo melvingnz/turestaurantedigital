@@ -1,5 +1,7 @@
 import { getTenantBySlug, getProductsBySlug } from '@/lib/api'
-import { MenuClient } from '@/components/storefront/menu-client'
+import { LateBurgerStorefront } from '@/components/storefront/late-burger-storefront'
+import { StorefrontClient } from '@/components/storefront/storefront-client'
+import { LATE_BURGER_TENANT, LATE_BURGER_PRODUCTS } from '@/lib/mock-data'
 import { notFound } from 'next/navigation'
 
 export default async function StorefrontPage({
@@ -7,6 +9,20 @@ export default async function StorefrontPage({
 }: {
   params: { slug: string }
 }) {
+  // TODO: Replace with Supabase fetch when ready
+  // For now, use mock data for Late Burger pilot with Vibrant Blue Theme
+  const isLateBurger = params.slug === 'lateburger'
+  
+  if (isLateBurger) {
+    return (
+      <LateBurgerStorefront
+        tenant={LATE_BURGER_TENANT}
+        products={LATE_BURGER_PRODUCTS}
+      />
+    )
+  }
+
+  // Fallback to Supabase for other tenants (light theme)
   const tenant = await getTenantBySlug(params.slug)
   
   if (!tenant) {
@@ -15,5 +31,5 @@ export default async function StorefrontPage({
 
   const products = await getProductsBySlug(params.slug)
 
-  return <MenuClient products={products} tenantId={tenant.id} />
+  return <StorefrontClient tenant={tenant} products={products} />
 }

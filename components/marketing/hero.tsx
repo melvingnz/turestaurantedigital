@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { HeroMockup } from './hero-mockup'
+import Link from 'next/link'
 
 export function Hero() {
   return (
@@ -21,20 +22,24 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button 
-                size="lg" 
-                className="bg-[#FF5F1F] hover:opacity-90 text-white rounded-md px-8 py-6 text-base font-semibold"
-              >
-                Ver Planes
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="bg-white border-gray-300 hover:bg-gray-50 rounded-md px-8 py-6 text-base font-semibold"
-              >
-                <ArrowRight className="mr-2 h-5 w-5" />
-                Ver Menú de Ejemplo
-              </Button>
+              <Link href="/signup">
+                <Button 
+                  size="lg" 
+                  className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white rounded-md px-8 py-6 text-base font-semibold"
+                >
+                  Ver Planes
+                </Button>
+              </Link>
+              <Link href="/lateburger">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="bg-white border-gray-300 hover:bg-gray-50 rounded-md px-8 py-6 text-base font-semibold"
+                >
+                  <ArrowRight className="mr-2 h-5 w-5" />
+                  Ver Menú de Ejemplo
+                </Button>
+              </Link>
             </div>
           </div>
 

@@ -420,6 +420,18 @@ Producto: "Doble Queso Burger"
 - [x] Carrito con Context API
 - [x] Checkout flow
 - [x] Order placement
+- [x] Storefront Dark Theme para Late Burger (Master Template)
+- [x] Branding dinámico (colores, logo)
+
+**Tareas Pendientes:**
+- [ ] **Sistema de Upload Masivo de Assets para Storefront**
+  - Upload de logo del restaurante
+  - Upload de imágenes de productos (múltiples a la vez)
+  - Upload de banner/hero image personalizado
+  - Gestor de assets en `/app/settings/assets`
+  - Preview de cómo se verán en el storefront
+  - Optimización automática (resize, compress)
+  - Soporte para diferentes formatos (JPG, PNG, WEBP)
 - [x] 404 si tenant no existe
 
 **Tareas Pendientes:**
@@ -553,6 +565,11 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 7. ⚠️ **Modificadores en Menu Builder** - PENDIENTE
    - Agregar modificadores a productos
    - Mostrar modificadores en storefront
+8. ⚠️ **Asset Management System** - PLANIFICADO
+   - Upload masivo de imágenes para productos
+   - Gestor de assets (logos, banners, productos)
+   - Optimización automática de imágenes
+   - Preview de assets en storefront
 
 ### Prioridad 🟢 BAJA
 
@@ -731,6 +748,99 @@ useEffect(() => {
 - `components/ui/image-upload.tsx` - Componente de upload
 - `supabase/storage.sql` - Script de configuración de Storage
 - `supabase/STORAGE_SETUP.md` - Instrucciones de setup
+
+---
+
+## 🔮 ROADMAP FUTURO (Post-MVP)
+
+### FASE 6: Asset Management System ⚠️ **PLANIFICADO**
+
+**Objetivo:** Permitir que restaurantes suban y gestionen todos sus assets (imágenes, logos, banners) desde el Admin Panel de forma masiva y eficiente.
+
+**Contexto Actual:**
+- ✅ Ya tenemos Supabase Storage configurado (`restaurant-logos`, `product-images`)
+- ✅ Ya tenemos componente `ImageUpload` para upload individual
+- ✅ Los restaurantes pueden subir logo y una imagen por producto
+- ⚠️ **Limitación actual:** Upload uno por uno, no hay gestión centralizada
+- ⚠️ **Late Burger:** Actualmente usa imágenes hardcodeadas en `/public/images/` (temporal para MVP)
+
+**Features Planificadas:**
+
+#### 6.1 Asset Manager Dashboard (`/app/settings/assets`)
+
+**Objetivo:** Dashboard centralizado para gestionar todos los assets del restaurante.
+
+**Features:**
+- [ ] Vista de galería de todos los assets (logos, productos, banners)
+- [ ] Filtros por tipo de asset (Logo, Producto, Banner)
+- [ ] Búsqueda de assets por nombre
+- [ ] Preview de assets antes de usar
+- [ ] Estadísticas de uso (qué assets están siendo usados en productos activos)
+- [ ] Eliminación de assets no utilizados (con confirmación)
+- [ ] Reasignación de imágenes a diferentes productos
+
+#### 6.2 Upload Masivo de Productos
+
+**Objetivo:** Permitir subir múltiples imágenes de productos a la vez para agilizar el setup del storefront.
+
+**Features:**
+- [ ] Drag & drop múltiple (seleccionar 10+ imágenes a la vez)
+- [ ] Progress bar para uploads grandes
+- [ ] Retry automático en caso de fallo
+- [ ] CSV import con URLs de imágenes (opcional)
+- [ ] Asignación automática de imágenes a productos existentes por nombre
+- [ ] Validación de formato y tamaño en batch
+- [ ] Preview de todas las imágenes antes de confirmar upload
+
+**Flujo de Trabajo:**
+1. Restaurante va a `/app/settings/assets`
+2. Selecciona "Upload Masivo de Productos"
+3. Arrastra 10 imágenes a la vez
+4. Sistema valida formato/tamaño
+5. Restaurante asigna cada imagen a un producto (o crea productos nuevos)
+6. Confirmación y preview del storefront actualizado
+
+#### 6.3 Optimización Automática de Imágenes
+
+**Objetivo:** Mejorar performance del storefront con imágenes optimizadas automáticamente.
+
+**Features:**
+- [ ] Resize automático según uso:
+  - Thumbnail (150x150) para listas
+  - Card (400x400) para grid de productos
+  - Hero (1200x800) para banners
+- [ ] Compresión inteligente (WebP cuando sea posible, fallback a JPG)
+- [ ] Lazy loading en storefront
+- [ ] CDN integration (opcional, para escalar)
+- [ ] Next.js Image Optimization API
+
+#### 6.4 Branding Assets Avanzados
+
+**Objetivo:** Permitir personalización completa del storefront con múltiples variantes.
+
+**Features:**
+- [ ] Upload de múltiples variantes de logo:
+  - Logo claro (para fondos oscuros)
+  - Logo oscuro (para fondos claros)
+  - Favicon (32x32, 64x64)
+  - Icon para app móvil (512x512)
+- [ ] Upload de banner/hero personalizado
+- [ ] Templates de storefront (Dark, Light, Custom)
+- [ ] Preview en tiempo real de cambios en storefront
+
+**Tecnología:**
+- Supabase Storage (ya implementado)
+- Extender componente `ImageUpload` a `ImageUploadMultiple`
+- Next.js Image Optimization API
+- Sharp para procesamiento de imágenes (opcional)
+
+**Prioridad:** 🟡 **MEDIA** (Mejora UX significativa, no bloquea MVP)
+
+**Nota Importante:** 
+Actualmente, Late Burger usa imágenes hardcodeadas en `/public/images/` como solución temporal para el MVP. Cuando se implemente este sistema, los restaurantes podrán:
+1. Subir todas sus imágenes desde el Admin Panel
+2. Gestionar sus assets de forma centralizada
+3. No depender de archivos en `/public/` (que no escalan para múltiples restaurantes)
 
 ---
 

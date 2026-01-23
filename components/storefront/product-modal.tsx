@@ -19,9 +19,10 @@ interface ProductModalProps {
   product: Product | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  primaryColor?: string
 }
 
-export function ProductModal({ product, open, onOpenChange }: ProductModalProps) {
+export function ProductModal({ product, open, onOpenChange, primaryColor = '#FF5F1F' }: ProductModalProps) {
   const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
 
@@ -67,7 +68,7 @@ export function ProductModal({ product, open, onOpenChange }: ProductModalProps)
                 {product.description}
               </SheetDescription>
             )}
-            <div className="text-3xl font-bold text-primary mt-4">
+            <div className="text-3xl font-bold mt-4" style={{ color: primaryColor }}>
               {formatPrice(product.price)}
             </div>
           </SheetHeader>
@@ -108,7 +109,8 @@ export function ProductModal({ product, open, onOpenChange }: ProductModalProps)
             {/* Add to Cart Button */}
             <Button
               onClick={handleAddToCart}
-              className="w-full h-14 text-lg font-semibold bg-primary hover:bg-primary/90"
+              className="w-full h-14 text-lg font-semibold text-white hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: primaryColor }}
             >
               Agregar al Carrito - {formatPrice(product.price * quantity)}
             </Button>

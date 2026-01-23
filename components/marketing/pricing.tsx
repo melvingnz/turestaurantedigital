@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 
 const plans = [
   {
@@ -88,16 +89,18 @@ export function Pricing() {
                 ))}
               </ul>
 
-              <Button
-                className={`w-full ${
-                  plan.popular
-                    ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                }`}
-                size="lg"
-              >
-                {plan.cta}
-              </Button>
+              <Link href="/signup">
+                <Button
+                  className={`w-full ${
+                    plan.popular
+                      ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }`}
+                  size="lg"
+                >
+                  {plan.cta}
+                </Button>
+              </Link>
             </Card>
           ))}
         </div>

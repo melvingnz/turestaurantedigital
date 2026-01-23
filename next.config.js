@@ -1,16 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Reducir el uso de file watchers
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
+  // Optimizar file watchers para evitar EMFILE
+  webpack: (config, { isServer, dev }) => {
+    if (dev && !isServer) {
+      // Usar polling en lugar de file watching para evitar EMFILE
       config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-        ignored: ['**/node_modules', '**/.git', '**/.next'],
+        poll: 2000, // Poll cada 2 segundos
+        aggregateTimeout: 500,
+        ignored: [
+          '**/node_modules/**',
+          '**/.git/**',
+          '**/.next/**',
+          '**/public/**',
+          '**/.env*',
+          '**/dist/**',
+          '**/build/**',
+          '**/*.log',
+        ],
       }
     }
     return config
+  },
+  // Deshabilitar file watching para archivos estáticos
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
   },
 }
 

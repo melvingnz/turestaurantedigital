@@ -9,7 +9,7 @@ import { Footer } from '@/components/marketing/footer'
 
 export default function MarketingPage() {
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Navbar />
       <Hero />
       <TrustedBy />
@@ -18,6 +18,6 @@ export default function MarketingPage() {
       <Pricing />
       <FAQ />
       <Footer />
-    </>
+    </div>
   )
 }
