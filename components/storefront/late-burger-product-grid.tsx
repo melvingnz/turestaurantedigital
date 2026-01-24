@@ -4,9 +4,8 @@ import { Plus, Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import type { Product } from '@/types/database'
 
-// Late Burger Official Brand Colors
-const LATE_BURGER_PRIMARY = '#0FA8D8' // Brand Blue (Background, Buttons & Prices)
-const LATE_BURGER_SECONDARY = '#FCFF70' // Brand Yellow (Text & Accents)
+const LATE_BURGER_PRIMARY = '#0FA8D8'
+const LATE_BURGER_SECONDARY = '#FCFF70'
 
 interface LateBurgerProductGridProps {
   products: Product[]
@@ -14,14 +13,13 @@ interface LateBurgerProductGridProps {
 }
 
 export function LateBurgerProductGrid({ products, onProductClick }: LateBurgerProductGridProps) {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-DO', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price)
-  }
 
   if (products.length === 0) {
     return (
@@ -33,80 +31,66 @@ export function LateBurgerProductGrid({ products, onProductClick }: LateBurgerPr
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8" id="menu-section">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
       {products.map((product) => (
         <button
           key={product.id}
           onClick={() => onProductClick(product)}
-          className="group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 text-left shadow-xl hover:shadow-2xl"
-          style={{
-            border: '3px solid transparent',
-          }}
+          className="group relative bg-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 text-left shadow-lg hover:shadow-xl active:scale-[0.98] touch-manipulation"
+          style={{ border: '2px solid transparent' }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = LATE_BURGER_SECONDARY
-            e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
-            e.currentTarget.style.boxShadow = `0 20px 40px ${LATE_BURGER_SECONDARY}40`
+            e.currentTarget.style.transform = 'translateY(-4px)'
+            e.currentTarget.style.boxShadow = `0 12px 32px ${LATE_BURGER_SECONDARY}30`
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = 'transparent'
-            e.currentTarget.style.transform = 'translateY(0) scale(1)'
-            e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = ''
           }}
         >
-          {/* Image Container */}
-          <div className="relative w-full h-64 md:h-72 overflow-hidden bg-gray-100">
+          <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
             {product.image_url ? (
               <Image
                 src={product.image_url}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                <ImageIcon className="h-16 w-16 text-gray-400" />
+                <ImageIcon className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400" />
               </div>
             )}
-            
-            {/* Yellow Accent Bar */}
             <div
               className="absolute top-0 left-0 w-full h-1"
               style={{ backgroundColor: LATE_BURGER_SECONDARY }}
             />
-            
-            {/* Add Button Overlay - Yellow */}
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4">
               <div
-                className="h-14 w-14 rounded-full flex items-center justify-center shadow-xl transition-transform group-hover:scale-110"
+                className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full flex items-center justify-center shadow-xl transition-transform group-hover:scale-110 group-active:scale-95"
                 style={{ backgroundColor: LATE_BURGER_SECONDARY }}
               >
-                <Plus 
-                  className="h-7 w-7"
-                  style={{ color: LATE_BURGER_PRIMARY }}
-                />
+                <Plus className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" style={{ color: LATE_BURGER_PRIMARY }} />
               </div>
             </div>
           </div>
-
-          {/* Product Info */}
-          <div className="p-6 bg-white">
-            <h3 
-              className="font-bold text-xl md:text-2xl mb-3 line-clamp-2"
+          <div className="p-3 sm:p-4 md:p-6 bg-white">
+            <h3
+              className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-1 sm:mb-2 md:mb-3 line-clamp-2"
               style={{ color: LATE_BURGER_PRIMARY }}
             >
               {product.name}
             </h3>
-            
             {product.description && (
-              <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 line-clamp-2 leading-relaxed hidden sm:block">
                 {product.description}
               </p>
             )}
-
             <div className="flex items-center justify-between">
               <span
-                className="text-2xl md:text-3xl font-bold"
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold"
                 style={{ color: LATE_BURGER_PRIMARY }}
               >
                 {formatPrice(product.price)}

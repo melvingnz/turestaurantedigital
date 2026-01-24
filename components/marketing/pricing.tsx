@@ -38,60 +38,60 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section className="w-full bg-white py-20 lg:py-24">
+    <section id="pricing" className="w-full bg-white py-12 sm:py-16 md:py-20 lg:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
             Planes <span className="text-[#FF5F1F]">simples y transparentes</span>
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Sin comisiones ocultas. Sin sorpresas. Solo precios claros.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 max-w-4xl mx-auto">
           {plans.map((plan, index) => (
             <Card
               key={index}
-              className={`relative p-8 ${
+              className={`relative p-5 sm:p-6 md:p-7 lg:p-8 ${
                 plan.popular
-                  ? 'border-2 border-[#FF5F1F] shadow-xl scale-105'
+                  ? 'border-2 border-[#FF5F1F] shadow-xl md:scale-105'
                   : 'border-gray-200'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-[#FF5F1F] text-white text-sm font-semibold px-4 py-1 rounded-full">
+                <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-[#FF5F1F] text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-0.5 sm:py-1 rounded-full">
                     Popular
                   </span>
                 </div>
               )}
 
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                <p className="text-gray-600 mb-4">{plan.description}</p>
+              <div className="text-center mb-5 sm:mb-6 md:mb-8">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 leading-snug">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-4xl lg:text-5xl font-bold text-gray-900">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
                     {plan.price}
                   </span>
                   {plan.period && (
-                    <span className="text-gray-500 text-lg">{plan.period}</span>
+                    <span className="text-gray-500 text-base sm:text-lg">{plan.period}</span>
                   )}
                 </div>
               </div>
 
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-2.5 sm:space-y-3 md:space-y-4 mb-5 sm:mb-6 md:mb-8">
                 {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-[#FF5F1F] flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600">{feature}</span>
+                  <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
+                    <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF5F1F] flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-600 leading-snug">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <Link href="/signup">
                 <Button
-                  className={`w-full ${
+                  className={`w-full text-sm sm:text-base h-10 sm:h-11 md:h-12 ${
                     plan.popular
                       ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white'
                       : 'bg-gray-900 hover:bg-gray-800 text-white'

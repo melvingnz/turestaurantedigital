@@ -8,10 +8,10 @@ export function Footer() {
 
   return (
     <footer className="w-full bg-slate-50 border-t border-gray-200">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Column 1: Brand Identity */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Logo />
             <p className="text-sm text-gray-500 leading-relaxed">
               Digitalizando la gastronomía dominicana, un pedido a la vez.
@@ -48,9 +48,9 @@ export function Footer() {
           </div>
 
           {/* Column 2: Producto */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900 text-base">Producto</h3>
-            <ul className="space-y-3">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Producto</h3>
+            <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
                   href="#features"
@@ -95,9 +95,9 @@ export function Footer() {
           </div>
 
           {/* Column 3: Recursos */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900 text-base">Recursos</h3>
-            <ul className="space-y-3">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Recursos</h3>
+            <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
                   href="/support"
@@ -142,9 +142,9 @@ export function Footer() {
           </div>
 
           {/* Column 4: Legal */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900 text-base">Legal</h3>
-            <ul className="space-y-3">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Legal</h3>
+            <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
                   href="/terms"
@@ -174,7 +174,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-sm text-gray-500">
             © {currentYear} Tu Restaurante Digital. Todos los derechos reservados.
           </p>

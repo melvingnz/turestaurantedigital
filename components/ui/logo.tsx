@@ -50,7 +50,9 @@ export function Logo({ className }: { className?: string }) {
           opacity="0.5"
         />
       </svg>
-      <span className="font-bold text-gray-800 text-xl">Tu Restaurante Digital</span>
+      <span className="font-bold text-gray-800 text-xs sm:text-sm md:text-base lg:text-xl whitespace-nowrap">
+        Tu Restaurante Digital
+      </span>
     </div>
   )
 }

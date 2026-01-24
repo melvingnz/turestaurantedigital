@@ -9,16 +9,17 @@ export default async function StorefrontPage({
 }: {
   params: { slug: string } | Promise<{ slug: string }>
 }) {
-  // Handle params as Promise (Next.js 15+) or object (Next.js 14)
   const resolvedParams = await Promise.resolve(params)
   const slug = resolvedParams.slug
 
-  // DEBUG: Log slug received
-  console.log('[STOREFRONT PAGE]', {
-    slug,
-    paramsType: typeof params,
-    isPromise: params instanceof Promise,
-  })
+  // Reject static assets that [slug] wrongly catches (favicon, etc.)
+  const staticSlugs = ['favicon.ico', 'favicon.png', 'robots.txt', 'sitemap.xml']
+  if (slug && staticSlugs.includes(slug.toLowerCase())) {
+    notFound()
+  }
+
+  // DEBUG
+  console.log('[STOREFRONT PAGE]', { slug, paramsType: typeof params })
 
   // HARDCODED FALLBACK: Always use mock data for Late Burger
   // DO NOT rely on Supabase for Late Burger in production

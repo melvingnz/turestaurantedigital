@@ -7,7 +7,7 @@ import { Footer } from '@/components/marketing/footer'
 
 export default function MarketingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <MarketingClient />
       <Steps />
       <Pricing />

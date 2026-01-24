@@ -10,15 +10,16 @@ export default async function StorefrontLayout({
   children: React.ReactNode
   params: { slug: string } | Promise<{ slug: string }>
 }) {
-  // Handle params as Promise (Next.js 15+) or object (Next.js 14)
   const resolvedParams = await Promise.resolve(params)
   const slug = resolvedParams.slug
 
-  // DEBUG: Log slug in layout
-  console.log('[STOREFRONT LAYOUT]', {
-    slug,
-    paramsType: typeof params,
-  })
+  const staticSlugs = ['favicon.ico', 'favicon.png', 'robots.txt', 'sitemap.xml']
+  if (slug && staticSlugs.includes(slug.toLowerCase())) {
+    notFound()
+  }
+
+  // DEBUG
+  console.log('[STOREFRONT LAYOUT]', { slug, paramsType: typeof params })
 
   // TODO: Replace with Supabase fetch when ready
   // For now, use mock data for Late Burger pilot

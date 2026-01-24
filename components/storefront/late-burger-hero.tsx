@@ -29,23 +29,28 @@ export function LateBurgerHero({ product }: LateBurgerHeroProps) {
         />
       </div>
 
-      {/* Content - Botón posicionado en la parte inferior del banner */}
-      <div className="absolute bottom-24 md:bottom-32 left-0 right-0 z-[100] container mx-auto px-4 md:px-6 text-center">
+      {/* Content - Ver Menú sticky at bottom of hero, smooth scroll to categories */}
+      <div className="absolute bottom-20 sm:bottom-24 md:bottom-32 left-0 right-0 z-[100] container mx-auto px-4 md:px-6 text-center">
         <Button
+          type="button"
           size="lg"
-          className="h-16 px-10 text-xl font-bold hover:opacity-90 transition-opacity shadow-2xl rounded-full relative z-[100]"
+          className="h-14 sm:h-16 px-8 sm:px-10 text-lg sm:text-xl font-bold hover:opacity-90 active:scale-95 transition-all shadow-2xl rounded-full relative z-[100] touch-manipulation"
           style={{ 
             backgroundColor: LATE_BURGER_SECONDARY,
             color: LATE_BURGER_PRIMARY,
             position: 'relative',
             zIndex: 100,
+            touchAction: 'manipulation',
           }}
           onClick={() => {
-            document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' })
+            requestAnimationFrame(() => {
+              const el = document.getElementById('menu-section')
+              el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            })
           }}
         >
           Ver Menú
-          <ArrowDown className="ml-3 h-6 w-6" />
+          <ArrowDown className="ml-2 sm:ml-3 h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
       </div>
 

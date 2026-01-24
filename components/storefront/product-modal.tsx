@@ -7,11 +7,12 @@ import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
 } from '@/components/ui/sheet'
 import { Minus, Plus, Image as ImageIcon } from 'lucide-react'
+import Image from 'next/image'
 import type { Product } from '@/types/database'
 import { useCart } from './cart-context'
 
@@ -22,7 +23,12 @@ interface ProductModalProps {
   primaryColor?: string
 }
 
-export function ProductModal({ product, open, onOpenChange, primaryColor = '#FF5F1F' }: ProductModalProps) {
+export function ProductModal({
+  product,
+  open,
+  onOpenChange,
+  primaryColor = '#FF5F1F',
+}: ProductModalProps) {
   const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
 
@@ -34,85 +40,94 @@ export function ProductModal({ product, open, onOpenChange, primaryColor = '#FF5
     setQuantity(1)
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-DO', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price)
-  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl">
-        <div className="flex flex-col h-full">
-          {/* Product Image */}
-          <div className="relative w-full h-64 -mx-6 -mt-6 mb-4">
-            {product.image_url ? (
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                <ImageIcon className="h-16 w-16 text-gray-400" />
-              </div>
-            )}
-          </div>
-
-          {/* Product Info */}
-          <SheetHeader className="text-left">
-            <SheetTitle className="text-2xl">{product.name}</SheetTitle>
-            {product.description && (
-              <SheetDescription className="text-base text-gray-600 mt-2">
-                {product.description}
-              </SheetDescription>
-            )}
-            <div className="text-3xl font-bold mt-4" style={{ color: primaryColor }}>
-              {formatPrice(product.price)}
-            </div>
-          </SheetHeader>
-
-          {/* Quantity Selector */}
-          <div className="flex-1 flex flex-col justify-end space-y-4 py-6">
-            <div className="space-y-2">
-              <Label>Cantidad</Label>
-              <div className="flex items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-12 w-12"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  <Minus className="h-5 w-5" />
-                </Button>
-                <Input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="text-center text-lg font-semibold h-12"
+      <SheetContent
+        side="bottom"
+        className="h-[85vh] max-h-[90vh] rounded-t-2xl flex flex-col p-0 overflow-hidden w-full"
+      >
+        <div className="flex flex-col h-full overflow-hidden">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <div className="relative w-full aspect-square sm:aspect-[4/3] bg-gray-100 -mt-6">
+              {product.image_url ? (
+                <Image
+                  src={product.image_url}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 512px"
+                  priority
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-12 w-12"
-                  onClick={() => setQuantity(quantity + 1)}
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ImageIcon className="h-16 w-16 text-gray-400" />
+                </div>
+              )}
+            </div>
+            <div className="px-6 pt-4 pb-6">
+              <SheetHeader className="text-left p-0">
+                <SheetTitle className="text-xl sm:text-2xl">{product.name}</SheetTitle>
+                {product.description && (
+                  <SheetDescription className="text-base text-gray-600 mt-2">
+                    {product.description}
+                  </SheetDescription>
+                )}
+                <div
+                  className="text-2xl sm:text-3xl font-bold mt-4"
+                  style={{ color: primaryColor }}
                 >
-                  <Plus className="h-5 w-5" />
-                </Button>
+                  {formatPrice(product.price)}
+                </div>
+              </SheetHeader>
+              <div className="mt-6 space-y-2">
+                <Label>Cantidad</Label>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-12 w-12 rounded-full touch-manipulation"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  >
+                    <Minus className="h-5 w-5" />
+                  </Button>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) =>
+                      setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))
+                    }
+                    className="text-center text-lg font-semibold h-12 w-20"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-12 w-12 rounded-full touch-manipulation"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             </div>
-
-            {/* Add to Cart Button */}
+          </div>
+          <div className="flex-shrink-0 p-4 sm:p-6 pt-0 border-t bg-white">
             <Button
               onClick={handleAddToCart}
-              className="w-full h-14 text-lg font-semibold text-white hover:opacity-90 transition-opacity"
+              className="w-full h-14 text-lg font-semibold text-white rounded-xl touch-manipulation active:scale-[0.98]"
               style={{ backgroundColor: primaryColor }}
             >
-              Agregar al Carrito - {formatPrice(product.price * quantity)}
+              Agregar al Carrito – {formatPrice(product.price * quantity)}
             </Button>
           </div>
         </div>

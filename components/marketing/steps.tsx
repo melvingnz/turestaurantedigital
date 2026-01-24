@@ -24,32 +24,32 @@ const steps = [
 
 export function Steps() {
   return (
-    <section className="w-full bg-gray-50 py-20 lg:py-24">
+    <section className="w-full bg-gray-50 py-12 sm:py-16 md:py-20 lg:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
             Comienza en <span className="text-[#FF5F1F]">3 pasos simples</span>
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             No necesitas conocimientos técnicos. Estarás listo en minutos.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12 max-w-5xl mx-auto">
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
               <div key={index} className="text-center">
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-[#FF5F1F] rounded-full flex items-center justify-center shadow-lg">
-                    <Icon className="h-10 w-10 text-white" />
+                <div className="relative mb-4 sm:mb-5 md:mb-6">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 mx-auto bg-[#FF5F1F] rounded-full flex items-center justify-center shadow-lg">
+                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-white border-2 border-[#FF5F1F] rounded-full flex items-center justify-center">
-                    <span className="text-[#FF5F1F] font-bold text-lg">{step.number}</span>
+                  <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-white border-2 border-[#FF5F1F] rounded-full flex items-center justify-center">
+                    <span className="text-[#FF5F1F] font-bold text-xs sm:text-sm md:text-lg">{step.number}</span>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1.5 sm:mb-2 leading-tight">{step.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600 leading-snug">{step.description}</p>
               </div>
             )
           })}

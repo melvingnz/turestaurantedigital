@@ -364,6 +364,17 @@ Verifica que el middleware esté configurado correctamente. El middleware maneja
 - Rutas directas: `turestaurantedigital.com/lateburger`
 - Localhost: `lateburger.localhost:3000` o `localhost:3000/lateburger`
 
+### Late Burger pantalla en blanco / `MODULE_NOT_FOUND` (`./682.js`, `./vendor-chunks/@swc.js`)
+Es caché de Next.js corrupta. **Solución:**
+
+1. **Detén el dev server** (Ctrl+C en la terminal donde corre `npm run dev`).
+2. Ejecuta: `npm run clean`
+3. Arranca de nuevo: `npm run dev`
+
+O en un solo paso (con el dev **ya parado**): `npm run dev:fresh`
+
+Si `npm run clean` falla con `EPERM` o `EBUSY`, algún proceso sigue usando `.next`. Cierra todas las terminales con `npm run dev`, vuelve a abrir una y ejecuta `npm run clean` y luego `npm run dev`.
+
 ## 📚 Recursos
 
 ### Documentación
