@@ -1,7 +1,0 @@
-fix: solve z-index issues, remove sides category, and improve dev environment
-
-- Adjusted z-index for Late Burger hero and header components to fix overlaying
-- Removed "Sides" category from the storefront header
-- Configured allowedDevOrigins in next.config.js for localhost subdomains
-- Optimized middleware to ignore system/static files
-- Implemented Node 20 LTS workaround for Windows EPERM issues in dev script
