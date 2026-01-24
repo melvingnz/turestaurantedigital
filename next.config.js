@@ -39,6 +39,7 @@ const nextConfig = {
   // Deshabilitar file watching para archivos estáticos
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    allowedDevOrigins: ['lateburger.localhost:3000', 'localhost:3000'],
   },
 }
 

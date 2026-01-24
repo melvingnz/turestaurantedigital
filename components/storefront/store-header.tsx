@@ -11,7 +11,6 @@ const LATE_BURGER_SECONDARY = '#FCFF70'
 
 const CATEGORIES = [
   { id: 'burgers', label: 'Hamburguesas', icon: UtensilsCrossed },
-  { id: 'sides', label: 'Sides', icon: UtensilsCrossed },
   { id: 'drinks', label: 'Bebidas', icon: Coffee },
 ] as const
 
@@ -124,7 +123,7 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
           role="dialog"
           aria-modal="true"
           aria-label="Categorías"
-          className={`fixed inset-0 z-[100] ${menuOpen ? 'visible' : 'invisible pointer-events-none'}`}
+          className={`fixed inset-0 z-[1000] ${menuOpen ? 'visible' : 'invisible pointer-events-none'}`}
         >
           <div
             className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`}

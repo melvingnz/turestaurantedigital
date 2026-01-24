@@ -6,6 +6,11 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
   const pathname = url.pathname
 
+  // Ignore system/hidden files (like favicon, .well-known, etc.)
+  if (pathname.includes('/.') || pathname.endsWith('.ico') || pathname.endsWith('.png')) {
+    return NextResponse.next()
+  }
+
   // DEBUG: Log middleware execution
   console.log('[MIDDLEWARE]', {
     hostname,

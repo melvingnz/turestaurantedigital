@@ -844,5 +844,23 @@ Actualmente, Late Burger usa imágenes hardcodeadas en `/public/images/` como so
 
 ---
 
+## 🛠️ SOLUCIÓN DE PROBLEMAS (TROUBLESHOOTING)
+
+### 1. Error `spawn EPERM` en Windows (Node.js 21+)
+
+**Problema:** Al ejecutar `npm run dev` en Windows con Node.js v21 o v22, el servidor de desarrollo de Next.js falla con un error `spawn EPERM`. Esto se debe a un bug conocido en Node.js al realizar `fork()` de procesos hijo en Windows.
+
+**Solución Implementada:**
+- Se ha modificado `scripts/dev.js` para detectar si se está en Windows con Node >= 21.
+- En ese caso, se ejecuta Next.js forzando el uso de **Node 20 LTS** mediante `npx --yes node@20`.
+- Se ha añadido un archivo `.nvmrc` y restricciones de versión en `package.json` para recomendar el uso de Node 20.
+
+**Archivos afectados:**
+- `scripts/dev.js`
+- `package.json`
+- `.nvmrc`
+
+---
+
 **Última Actualización:** 2026  
 **Mantenido por:** Equipo de Desarrollo - Tu Restaurante Digital
