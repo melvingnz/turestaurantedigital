@@ -8,7 +8,7 @@ export function Footer() {
 
   return (
     <footer className="w-full bg-slate-50 border-t border-gray-200">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Column 1: Brand Identity */}
           <div className="space-y-3 sm:space-y-4">
@@ -136,6 +136,14 @@ export function Footer() {
                   className="text-sm text-gray-600 hover:text-[#FF6B00] transition-colors"
                 >
                   Contacto
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#faq"
+                  className="text-sm text-gray-600 hover:text-[#FF6B00] transition-colors"
+                >
+                  Preguntas Frecuentes
                 </Link>
               </li>
               <li>

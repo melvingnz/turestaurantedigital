@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+  <title>Concept 3: Plate with checkmark</title>
+  <!-- Plate = circle; bold checkmark = order done / fast action -->
+  <g>
+    <!-- Plate rim (outer) -->
+    <circle cx="60" cy="60" r="48" fill="#FFFFFF" stroke="#FF6B00" stroke-width="4" />
+    <!-- Plate well (inner) -->
+    <circle cx="60" cy="60" r="38" fill="#FFFFFF" stroke="#FF6B00" stroke-width="2" />
+    <!-- Bold checkmark -->
+    <path d="M36 60 L52 76 L84 44" stroke="#FF6B00" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+</svg>

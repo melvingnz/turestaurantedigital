@@ -28,11 +28,11 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section className="w-full bg-gray-50 py-12 sm:py-16 md:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="faq" className="w-full bg-gray-50 py-12 sm:py-16 md:py-20 lg:py-24">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-            Preguntas <span className="text-[#FF5F1F]">frecuentes</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
+            Preguntas <span className="text-[#FF6B00]">frecuentes</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Todo lo que necesitas saber sobre nuestra plataforma.
@@ -40,11 +40,15 @@ export function FAQ() {
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <Accordion type="single" defaultValue="0">
+          <Accordion type="single" defaultValue="0" className="space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={index.toString()}>
-                <AccordionTrigger value={index.toString()}>{faq.question}</AccordionTrigger>
-                <AccordionContent value={index.toString()}>{faq.answer}</AccordionContent>
+              <AccordionItem key={index} value={index.toString()} className="border-[#E5E5E5] rounded-xl overflow-hidden bg-white shadow-sm">
+                <AccordionTrigger value={index.toString()} className="px-4 py-4 sm:px-5 sm:py-5 min-h-[56px] sm:min-h-[60px] hover:bg-[#FFF7F2] data-[state=open]:bg-[#FFF7F2] text-left">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent value={index.toString()} className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0 text-[#1A1A1A]/80">
+                  {faq.answer}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

@@ -11,7 +11,7 @@ export function TrustedBy() {
 
   return (
     <section className="w-full bg-gray-50 py-8 sm:py-12 md:py-14 lg:py-16 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-gray-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-4 sm:mb-6 md:mb-8">
             Confiado por restaurantes en República Dominicana
@@ -55,10 +55,10 @@ export function TrustedBy() {
                 </div>
 
                 <div className="flex-1 min-w-0 text-center md:text-left w-full">
-                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-1.5 md:mb-2 group-hover:text-[#FF5F1F] transition-colors leading-tight">
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#1A1A1A] mb-1 sm:mb-1.5 md:mb-2 group-hover:text-[#FF6B00] transition-colors leading-tight">
                     Late Burger SDQ
                   </h3>
-                  <p className="text-gray-600 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base lg:text-lg leading-snug sm:leading-relaxed">
+                  <p className="text-[#1A1A1A]/70 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base lg:text-lg leading-snug sm:leading-relaxed break-words">
                     Primer restaurante en digitalizar su experiencia con Tu Restaurante Digital
                   </p>
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 sm:gap-2 md:gap-3 text-xs sm:text-sm">
@@ -67,7 +67,7 @@ export function TrustedBy() {
                       <span className="text-green-700 font-medium">En línea</span>
                     </span>
                     <span className="text-gray-400 shrink-0 hidden sm:inline" aria-hidden>•</span>
-                    <span className="text-gray-600 font-medium shrink-0">Santo Domingo, RD</span>
+                    <span className="text-[#1A1A1A]/70 font-medium shrink-0">Santo Domingo, RD</span>
                     <span className="text-gray-400 shrink-0 hidden sm:inline" aria-hidden>•</span>
                     <span
                       className="font-semibold transition-colors group-hover:underline shrink-0"

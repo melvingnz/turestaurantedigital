@@ -5,9 +5,9 @@ import { ShoppingBag, Clock, CheckCircle, ChefHat, Plus, Bell } from 'lucide-rea
 export function HeroMockup() {
   return (
     <div className="relative w-full max-w-full mx-auto overflow-hidden">
-      <div className="absolute inset-0 bg-[#FF5F1F]/20 blur-3xl rounded-full -z-10" />
-      <div className="relative animate-float w-full max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[500px] xl:max-w-[560px] mx-auto">
-        <div className="relative w-full max-w-[600px] mx-auto">
+      <div className="absolute inset-0 bg-[#FF6B00]/20 blur-3xl rounded-full -z-10" />
+      <div className="relative animate-float w-full max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[500px] xl:max-w-[560px] mx-auto flex flex-col md:block">
+        <div className="relative w-full max-w-[600px] mx-auto flex-shrink-0">
           <div
             className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-2xl w-full"
             style={{
@@ -56,11 +56,11 @@ export function HeroMockup() {
             </div>
           </div>
 
-          {/* Phone - hidden on very small, scaled on mobile */}
-          <div className="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-6 w-40 sm:w-52 md:w-64 h-[320px] sm:h-[400px] md:h-[500px] z-10 hidden min-[480px]:block">
+          {/* Phone - stacked below KDS on mobile, absolute overlay on md+ */}
+          <div className="mt-4 sm:mt-6 md:mt-0 flex-shrink-0 w-36 sm:w-44 md:w-64 h-[280px] sm:h-[360px] md:h-[500px] mx-auto md:absolute md:-bottom-6 md:-right-6 md:mx-0 z-10">
             <div
               className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-1.5 sm:p-2 shadow-2xl transform rotate-[-8deg] h-full"
-              style={{ boxShadow: '0 25px 50px -12px rgba(255, 95, 31, 0.25)' }}
+              style={{ boxShadow: '0 25px 50px -12px rgba(255, 107, 0, 0.25)' }}
             >
               <div className="absolute inset-0 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] ring-1 ring-white/20 pointer-events-none" />
               <div className="bg-black rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-1 sm:p-1.5 relative h-full">

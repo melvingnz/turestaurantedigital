@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+  <title>Concept 1: Fork &amp; Wi-Fi — minimal</title>
+  <!-- Geometric fork stem; prongs flow into Wi‑Fi arcs. Spoon bowl base. -->
+  <g stroke="#FF6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M60 16 v44 M52 24 l4-4 M60 24 l0 0 M68 24 l4 4" />
+    <path d="M38 48 Q60 32 82 48" />
+    <path d="M32 58 Q60 38 88 58" />
+    <path d="M26 68 Q60 44 94 68" />
+  </g>
+  <ellipse cx="60" cy="88" rx="20" ry="10" fill="#FF6B00" />
+  <path d="M40 88 L60 62 L80 88" stroke="#FF6B00" stroke-width="2.5" fill="none" stroke-linejoin="round" />
+</svg>

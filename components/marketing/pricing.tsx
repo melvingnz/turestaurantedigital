@@ -39,12 +39,12 @@ const plans = [
 export function Pricing() {
   return (
     <section id="pricing" className="w-full bg-white py-12 sm:py-16 md:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
             Planes <span className="text-[#FF6B00]">simples y transparentes</span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-[#1A1A1A]/70 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Sin comisiones ocultas. Sin sorpresas. Solo precios claros.
           </p>
         </div>
@@ -56,7 +56,7 @@ export function Pricing() {
               className={`relative p-5 sm:p-6 md:p-7 lg:p-8 ${
                 plan.popular
                   ? 'border-2 border-[#FF6B00] shadow-xl md:scale-105'
-                  : 'border-gray-200'
+                  : 'border-[#E5E5E5]'
               }`}
             >
               {plan.popular && (
@@ -69,7 +69,7 @@ export function Pricing() {
 
               <div className="text-center mb-5 sm:mb-6 md:mb-8">
                 <h3 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
-                <p className="text-sm sm:text-base text-[#1A1A1A]/70 mb-3 sm:mb-4 leading-snug">{plan.description}</p>
+                <p className="text-sm sm:text-base text-[#1A1A1A]/70 mb-3 sm:mb-4 leading-snug break-words">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A]">
                     {plan.price}
@@ -84,7 +84,7 @@ export function Pricing() {
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
                     <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF6B00] flex-shrink-0 mt-0.5" />
-                    <span className="text-sm sm:text-base text-[#1A1A1A]/70 leading-snug">{feature}</span>
+                    <span className="text-sm sm:text-base text-[#1A1A1A]/70 leading-snug break-words">{feature}</span>
                   </li>
                 ))}
               </ul>

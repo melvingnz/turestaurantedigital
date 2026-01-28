@@ -79,8 +79,9 @@ export function AccordionTrigger({ value, children, className }: AccordionTrigge
     <button
       type="button"
       onClick={() => toggleItem(value)}
+      data-state={isOpen ? 'open' : 'closed'}
       className={cn(
-        'w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors',
+        'w-full flex items-center justify-between text-left transition-colors',
         className
       )}
     >
@@ -108,8 +109,8 @@ export function AccordionContent({ value, children, className }: AccordionConten
   return (
     <div
       className={cn(
-        'overflow-hidden transition-all duration-300',
-        isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        'transition-all duration-300',
+        isOpen ? 'max-h-[min(70vh,28rem)] opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
       )}
     >
       <div className={cn('p-4 pt-0 text-gray-600', className)}>{children}</div>

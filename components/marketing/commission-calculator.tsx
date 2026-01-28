@@ -27,18 +27,19 @@ export function CommissionCalculator() {
 
   return (
     <section className="w-full bg-[#FFFFFF] py-12 sm:py-16 md:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
-            ¿Cuánto podrías{' '}
-            <span className="text-[#FF6B00]">ahorrar</span> cada mes?
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg text-[#1A1A1A]/70 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
-            Las apps de delivery cobran hasta 30% por orden. Con Tu Restaurante Digital, esas comisiones son tuyas.
-          </p>
-        </div>
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
+              ¿Cuánto podrías{' '}
+              <span className="text-[#FF6B00]">ahorrar</span> cada mes?
+            </h2>
+            <p className="text-sm sm:text-base md:text-lg text-[#1A1A1A]/70 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
+              Las apps de delivery cobran hasta 30% por orden. Con Tu Restaurante Digital, esas comisiones son tuyas.
+            </p>
+          </div>
 
-        <Card className="p-6 sm:p-8 md:p-10 border border-[#E5E5E5] bg-white shadow-sm">
+          <Card className="p-6 sm:p-8 md:p-10 border border-[#E5E5E5] bg-white shadow-sm">
           <form onSubmit={handleCalculate} className="space-y-6 sm:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -113,6 +114,7 @@ export function CommissionCalculator() {
             )}
           </div>
         </Card>
+        </div>
       </div>
     </section>
   )

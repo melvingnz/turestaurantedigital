@@ -111,9 +111,9 @@ export function Navbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 sm:h-16 items-center justify-between">
-            <Link href="/marketing" className="flex items-center min-w-0" onClick={closeMenu}>
+            <Link href="/" className="flex items-center min-w-0" onClick={closeMenu}>
               <Logo />
             </Link>
 

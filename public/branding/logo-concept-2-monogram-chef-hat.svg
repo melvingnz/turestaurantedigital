@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+  <title>Concept 2: TRD monogram as chef&apos;s hat</title>
+<!-- Chef toque silhouette; band reads as "T", crown holds "D" -->
+  <path d="M22 74 h76 v10 H22 Z" fill="#FF6B00" />
+  <path d="M28 74 V36 Q28 20 60 14 Q92 20 92 36 V74 H28 Z" fill="#FF6B00" />
+  <path d="M40 28 Q58 22 72 30 Q84 42 82 58 L74 68 H42 Q34 56 36 40 Q38 28 40 28 Z" fill="#FFFFFF" />
+  <rect x="38" y="74" width="44" height="6" rx="2" fill="#FFFFFF" />
+  <rect x="52" y="74" width="16" height="10" fill="#FFFFFF" />
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" fill="none" aria-hidden="true">
+  <title>Floating icons: dish, QR, mobile, fire</title>
+  <defs>
+    <g id="icon-dish">
+      <ellipse cx="0" cy="0" rx="14" ry="6" fill="#FF6B00" opacity="0.14" />
+    </g>
+    <g id="icon-qr">
+      <rect x="-10" y="-10" width="20" height="20" rx="2" fill="#FF6B00" opacity="0.14" />
+      <rect x="-5" y="-5" width="6" height="6" fill="#FFFFFF" opacity="0.4" />
+    </g>
+    <g id="icon-mobile">
+      <rect x="-10" y="-14" width="20" height="28" rx="3" fill="#FF6B00" opacity="0.14" />
+      <rect x="-6" y="-10" width="12" height="16" rx="1" fill="#FFFFFF" opacity="0.25" />
+    </g>
+    <g id="icon-flame">
+      <path d="M0-12 L-6 4 L-2 0 L-8 14 L2 6 L-4 18 L8 2 L0-12 Z" fill="#FF6B00" opacity="0.14" />
+    </g>
+  </defs>
+  <use href="#icon-dish" x="30" y="30" />
+  <use href="#icon-qr" x="90" y="24" />
+  <use href="#icon-mobile" x="150" y="20" />
+  <use href="#icon-flame" x="210" y="28" />
+  <use href="#icon-dish" x="70" y="90" />
+  <use href="#icon-qr" x="130" y="84" />
+  <use href="#icon-mobile" x="190" y="80" />
+  <use href="#icon-flame" x="10" y="88" />
+</svg>

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card } from '@/components/ui/card'
-import { MessageCircle, ShoppingBag, Monitor, ArrowRight } from 'lucide-react'
+import { MessageCircle, ShoppingBag, Monitor, ArrowRight, ChevronDown } from 'lucide-react'
 
 const steps = [
   {
@@ -25,7 +25,7 @@ const steps = [
 export function OmnichannelFlow() {
   return (
     <section className="w-full bg-[#F5F5F5] py-12 sm:py-16 md:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
             Flujo omnicanal{' '}
@@ -64,9 +64,14 @@ export function OmnichannelFlow() {
                   </div>
                 </Card>
                 {!isLast && (
-                  <div className="hidden md:flex items-center justify-center px-1 shrink-0">
-                    <ArrowRight className="h-6 w-6 text-[#FF6B00]" aria-hidden />
-                  </div>
+                  <>
+                    <div className="flex md:hidden items-center justify-center py-2 shrink-0">
+                      <ChevronDown className="h-6 w-6 text-[#FF6B00]/60" aria-hidden />
+                    </div>
+                    <div className="hidden md:flex items-center justify-center px-1 shrink-0">
+                      <ArrowRight className="h-6 w-6 text-[#FF6B00]" aria-hidden />
+                    </div>
+                  </>
                 )}
               </React.Fragment>
             )
