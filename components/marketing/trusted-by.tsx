@@ -66,9 +66,9 @@ export function TrustedBy() {
                       <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
                       <span className="text-green-700 font-medium">En línea</span>
                     </span>
-                    <span className="text-gray-400 shrink-0 hidden sm:inline" aria-hidden>•</span>
+                    <span className="text-gray-400 shrink-0 inline" aria-hidden>•</span>
                     <span className="text-[#1A1A1A]/70 font-medium shrink-0">Santo Domingo, RD</span>
-                    <span className="text-gray-400 shrink-0 hidden sm:inline" aria-hidden>•</span>
+                    <span className="text-gray-400 shrink-0 inline" aria-hidden>•</span>
                     <span
                       className="font-semibold transition-colors group-hover:underline shrink-0"
                       style={{ color: LATE_BURGER_PRIMARY }}

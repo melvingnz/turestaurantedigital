@@ -126,8 +126,8 @@ export function HeroMockup() {
         </div>
       </div>
 
-      {/* Floating badge - hide on very small */}
-      <div className="absolute top-4 sm:top-6 right-2 sm:right-4 z-20 animate-float hidden sm:block">
+      {/* Floating badge - visible on all viewports for strict parity */}
+      <div className="absolute top-4 sm:top-6 right-2 sm:right-4 z-20 animate-float block">
         <div className="bg-white rounded-lg shadow-xl p-2 sm:p-3 flex items-center gap-2 border border-gray-100">
           <div className="relative shrink-0">
             <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-700" />
