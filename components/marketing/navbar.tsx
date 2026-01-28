@@ -156,7 +156,6 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              onPointerDown={() => setMobileOpen(true)}
               className="md:hidden flex-shrink-0 p-3 -mr-1 min-w-[48px] min-h-[48px] rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 transition-colors touch-manipulation flex items-center justify-center border-0 cursor-pointer"
               style={{ touchAction: 'manipulation' }}
               aria-label="Abrir menú"
