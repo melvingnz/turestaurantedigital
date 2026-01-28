@@ -4,11 +4,12 @@ import type { ProductUpdate } from '@/types/database'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body: ProductUpdate = await request.json()
-    const product = await updateProduct(params.id, body)
+    const product = await updateProduct(id, body)
     return NextResponse.json(product)
   } catch (error) {
     console.error('Error updating product:', error)
@@ -21,10 +22,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await deleteProduct(params.id)
+    const { id } = await params
+    await deleteProduct(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting product:', error)
