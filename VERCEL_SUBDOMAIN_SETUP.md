@@ -44,7 +44,7 @@ Valor: cname.vercel-dns.com
 TTL: Auto (o 3600)
 ```
 
-**Nota**: Con wildcard, cualquier subdominio (ej: `cualquiercosa.turestaurantedigital.com`) apuntará a Vercel. El middleware se encargará de enrutarlo correctamente.
+**Nota**: Con wildcard, cualquier subdominio (ej: `cualquiercosa.turestaurantedigital.com`) apuntará a Vercel. El proxy (`proxy.ts`) se encargará de enrutarlo correctamente.
 
 ### Paso 3: Verificar en Vercel
 
@@ -105,8 +105,8 @@ Address: 76.76.21.21 (o una IP de Vercel)
 
 ### 3. Subdominio resuelve pero muestra error 404
 
-**Solución**: Esto significa que DNS funciona pero el middleware no está enrutando correctamente. Verifica:
-- Que el middleware esté desplegado correctamente
+**Solución**: Esto significa que DNS funciona pero el proxy no está enrutando correctamente. Verifica:
+- Que el proxy (`proxy.ts`) esté desplegado correctamente
 - Que la ruta `/storefront/[slug]` exista
 - Revisa los logs de Vercel para errores
 

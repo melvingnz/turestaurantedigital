@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Turbopack (Next 16+): silencia el aviso al tener webpack config sin turbopack config.
+  turbopack: {},
   // Configuración de imágenes para Next.js Image
   images: {
     remotePatterns: [
@@ -39,8 +41,8 @@ const nextConfig = {
   // Deshabilitar file watching para archivos estáticos
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    allowedDevOrigins: ['lateburger.localhost:3000', 'localhost:3000'],
   },
+  allowedDevOrigins: ['lateburger.localhost:3000', 'localhost:3000'],
 }
 
 module.exports = nextConfig

@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=18.0.0 <21.0.0"
+    "node": ">=18.0.0"
+  },
+  "overrides": {
+    "glob": "^10.5.0"
   },
   "scripts": {
     "dev": "node scripts/dev.js",
@@ -11,9 +14,11 @@
     "build": "node scripts/build.js",
     "start": "next start",
     "lint": "next lint",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "audit:fix": "npm audit fix"
   },
   "dependencies": {
+    "resend": "^4.0.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
@@ -23,7 +28,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.0.0",
     "lucide-react": "^0.427.0",
-    "next": "^14.2.35",
+    "next": "^16.1.6",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "tailwind-merge": "^2.4.0"

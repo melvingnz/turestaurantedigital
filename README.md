@@ -108,7 +108,7 @@ El sistema está dividido en **3 portales independientes**:
 ## 📦 Instalación
 
 ### Prerrequisitos
-- Node.js 18+ 
+- Node.js 18+
 - npm o yarn
 - Cuenta de Supabase
 
@@ -132,8 +132,10 @@ Crear un archivo `.env.local` en la raíz del proyecto con las siguientes variab
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 RESEND_API_KEY=your-resend-api-key
+RESEND_FROM=Tu Restaurante Digital <contacto@turestaurantedigital.com>  # opcional; por defecto onboarding@resend.dev
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (opcional)
 ```
+El formulario de contacto envía a `contacto@turestaurantedigital.com`. Para producción, verifica tu dominio en Resend y configura `RESEND_FROM` con un correo verificado.
 
 4. **Configurar la base de datos**
    - Ve a tu proyecto de Supabase
@@ -158,7 +160,7 @@ http://localhost:3000
 
 ### Routing Multi-Tenant
 
-El middleware (`middleware.ts`) maneja el routing automático:
+El proxy (`proxy.ts`) maneja el routing automático:
 
 **Desarrollo Local:**
 - `localhost:3000` → Acceso directo a rutas
@@ -237,7 +239,7 @@ turestaurantedigital/
 │   └── README.md           # Instrucciones DB
 ├── types/
 │   └── database.ts         # Tipos TypeScript
-├── middleware.ts           # Routing inteligente multi-tenant
+├── proxy.ts                # Routing inteligente multi-tenant (proxy, ex middleware)
 └── public/
     └── images/              # Imágenes estáticas (desarrollo)
 ```
@@ -266,7 +268,7 @@ npm run lint
 El registro crea usuario y tenant en una transacción atómica con rollback automático si falla.
 
 #### 2. Multi-tenancy
-Cada restaurante tiene su propio tenant con aislamiento completo de datos mediante RLS. El middleware maneja routing por subdominio o ruta directa.
+Cada restaurante tiene su propio tenant con aislamiento completo de datos mediante RLS. El proxy (`proxy.ts`) maneja routing por subdominio o ruta directa.
 
 #### 3. Realtime KDS
 El sistema de cocina se actualiza en tiempo real usando Supabase Realtime.
@@ -336,6 +338,10 @@ Ver `ROADMAP.md` para el roadmap completo y detallado del proyecto.
 
 ## 🐛 Troubleshooting
 
+### Error `spawn EPERM` en Windows al hacer `npm run dev`
+
+En Windows, Node 21+ puede provocar este error con Next.js. **Solución:** instala [Node 20 LTS](https://nodejs.org/) y úsalo (sin Volta ni nvm).
+
 ### Error DNS_PROBE_FINISHED_NXDOMAIN (Subdominio no resuelve)
 
 Si al acceder a `lateburger.turestaurantedigital.com` ves este error, significa que el DNS no está configurado.
@@ -359,7 +365,7 @@ Si encuentras errores `ENOENT: no such file or directory, lstat '...page_client-
 Las imágenes en `/public/images/` pueden no servirse correctamente en Vercel. Para producción, migra las imágenes a Supabase Storage. Ver `MIGRATE_IMAGES_TO_SUPABASE.md` para instrucciones.
 
 ### 404 en rutas de storefront
-Verifica que el middleware esté configurado correctamente. El middleware maneja:
+Verifica que el proxy (`proxy.ts`) esté configurado correctamente. Maneja:
 - Subdominios: `lateburger.turestaurantedigital.com`
 - Rutas directas: `turestaurantedigital.com/lateburger`
 - Localhost: `lateburger.localhost:3000` o `localhost:3000/lateburger`
@@ -385,7 +391,7 @@ Si `npm run clean` falla con `EPERM` o `EBUSY`, algún proceso sigue usando `.ne
 
 ### Archivos Clave
 - `supabase/schema.sql` - Schema de base de datos
-- `middleware.ts` - Routing inteligente multi-tenant
+- `proxy.ts` - Routing inteligente multi-tenant
 - `types/database.ts` - Tipos TypeScript
 - `app/actions/` - Server Actions
 - `lib/mock-data.ts` - Mock data para Late Burger

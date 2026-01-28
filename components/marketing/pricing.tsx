@@ -41,8 +41,8 @@ export function Pricing() {
     <section id="pricing" className="w-full bg-white py-12 sm:py-16 md:py-20 lg:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-            Planes <span className="text-[#FF5F1F]">simples y transparentes</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
+            Planes <span className="text-[#FF6B00]">simples y transparentes</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Sin comisiones ocultas. Sin sorpresas. Solo precios claros.
@@ -55,23 +55,23 @@ export function Pricing() {
               key={index}
               className={`relative p-5 sm:p-6 md:p-7 lg:p-8 ${
                 plan.popular
-                  ? 'border-2 border-[#FF5F1F] shadow-xl md:scale-105'
+                  ? 'border-2 border-[#FF6B00] shadow-xl md:scale-105'
                   : 'border-gray-200'
               }`}
             >
               {plan.popular && (
                 <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-[#FF5F1F] text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                  <span className="bg-[#FF6B00] text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-0.5 sm:py-1 rounded-full">
                     Popular
                   </span>
                 </div>
               )}
 
               <div className="text-center mb-5 sm:mb-6 md:mb-8">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 leading-snug">{plan.description}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
+                <p className="text-sm sm:text-base text-[#1A1A1A]/70 mb-3 sm:mb-4 leading-snug">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A]">
                     {plan.price}
                   </span>
                   {plan.period && (
@@ -83,18 +83,18 @@ export function Pricing() {
               <ul className="space-y-2.5 sm:space-y-3 md:space-y-4 mb-5 sm:mb-6 md:mb-8">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
-                    <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF5F1F] flex-shrink-0 mt-0.5" />
-                    <span className="text-sm sm:text-base text-gray-600 leading-snug">{feature}</span>
+                    <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF6B00] flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-[#1A1A1A]/70 leading-snug">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <Link href="/signup">
+              <Link href="/marketing/signup">
                 <Button
                   className={`w-full text-sm sm:text-base h-10 sm:h-11 md:h-12 ${
                     plan.popular
-                      ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white'
-                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                      ? 'bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white'
+                      : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white'
                   }`}
                   size="lg"
                 >

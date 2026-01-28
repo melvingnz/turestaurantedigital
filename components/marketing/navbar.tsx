@@ -47,18 +47,32 @@ function MobileMenuPanel({
         </div>
         <nav className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-1">
           <Link
-            href="#features"
-            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF5F1F] min-h-[44px] flex items-center touch-manipulation"
+            href="/#features"
+            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF6B00] min-h-[44px] flex items-center touch-manipulation"
             onClick={onLinkClick}
           >
             Características
           </Link>
           <Link
-            href="#pricing"
-            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF5F1F] min-h-[44px] flex items-center touch-manipulation"
+            href="/#pricing"
+            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF6B00] min-h-[44px] flex items-center touch-manipulation"
             onClick={onLinkClick}
           >
             Precios
+          </Link>
+          <Link
+            href="/about"
+            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF6B00] min-h-[44px] flex items-center touch-manipulation"
+            onClick={onLinkClick}
+          >
+            Acerca de
+          </Link>
+          <Link
+            href="/contact"
+            className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF6B00] min-h-[44px] flex items-center touch-manipulation"
+            onClick={onLinkClick}
+          >
+            Contacto
           </Link>
           <div className="pt-4 mt-4 border-t space-y-2">
             <Button variant="outline" className="w-full justify-center h-12" asChild>
@@ -66,7 +80,7 @@ function MobileMenuPanel({
                 Iniciar Sesión
               </Link>
             </Button>
-            <Button className="w-full justify-center h-12 bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white" asChild>
+            <Button className="w-full justify-center h-12 bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white" asChild>
               <Link href="/marketing/signup" onClick={onLinkClick}>
                 Empezar Ahora
               </Link>
@@ -105,16 +119,28 @@ export function Navbar() {
 
             <div className="hidden md:flex items-center gap-8">
               <Link
-                href="#features"
-                className="text-sm font-medium text-gray-600 hover:text-[#FF5F1F] transition-colors whitespace-nowrap"
+                href="/#features"
+                className="text-sm font-medium text-gray-600 hover:text-[#FF6B00] transition-colors whitespace-nowrap"
               >
                 Características
               </Link>
               <Link
-                href="#pricing"
-                className="text-sm font-medium text-gray-600 hover:text-[#FF5F1F] transition-colors whitespace-nowrap"
+                href="/#pricing"
+                className="text-sm font-medium text-gray-600 hover:text-[#FF6B00] transition-colors whitespace-nowrap"
               >
                 Precios
+              </Link>
+              <Link
+                href="/about"
+                className="text-sm font-medium text-gray-600 hover:text-[#FF6B00] transition-colors whitespace-nowrap"
+              >
+                Acerca de
+              </Link>
+              <Link
+                href="/contact"
+                className="text-sm font-medium text-gray-600 hover:text-[#FF6B00] transition-colors whitespace-nowrap"
+              >
+                Contacto
               </Link>
             </div>
 
@@ -122,7 +148,7 @@ export function Navbar() {
               <Button variant="ghost" asChild>
                 <Link href="/marketing/login">Iniciar Sesión</Link>
               </Button>
-              <Button className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90 text-white" asChild>
+              <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white" asChild>
                 <Link href="/marketing/signup">Empezar Ahora</Link>
               </Button>
             </div>

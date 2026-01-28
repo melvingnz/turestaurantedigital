@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   const url = request.nextUrl.clone()
   const pathname = url.pathname
@@ -11,8 +11,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // DEBUG: Log middleware execution
-  console.log('[MIDDLEWARE]', {
+  // DEBUG: Log proxy execution
+  console.log('[PROXY]', {
     hostname,
     pathname,
     userAgent: request.headers.get('user-agent')?.substring(0, 50),
@@ -26,18 +26,18 @@ export function middleware(request: NextRequest) {
     if (hostname.includes('.')) {
       const parts = hostname.split('.')
       const subdomain = parts[0]
-      
+
       if (subdomain && subdomain !== 'localhost' && subdomain !== '127' && subdomain !== '0' && subdomain !== '1') {
         url.pathname = `/${subdomain}${pathname === '/' ? '' : pathname}`
         return NextResponse.rewrite(url)
       }
     }
-    
+
     // Direct /lateburger -> /lateburger (already matches [slug])
     if (pathname.startsWith('/lateburger')) {
       return NextResponse.next()
     }
-    
+
     if (pathname.startsWith('/app')) {
       return NextResponse.next()
     }
@@ -76,7 +76,7 @@ export function middleware(request: NextRequest) {
     if (pathname.startsWith('/lateburger')) {
       return NextResponse.next()
     }
-    
+
     url.pathname = `/marketing${pathname === '/' ? '' : pathname}`
     return NextResponse.rewrite(url)
   }
@@ -90,17 +90,17 @@ export function middleware(request: NextRequest) {
   // Handle storefront subdomains: [slug].turestaurantedigital.com -> /(storefront)/[slug]
   // Extract subdomain from production domain
   const productionDomain = 'turestaurantedigital.com'
-  
+
   // Remove port if present for comparison
   const hostnameWithoutPort = hostname.split(':')[0]
-  
+
   // Check if hostname matches subdomain pattern: [slug].turestaurantedigital.com
   if (hostnameWithoutPort.endsWith(`.${productionDomain}`)) {
     // Extract subdomain: lateburger.turestaurantedigital.com -> lateburger
     const parts = hostnameWithoutPort.split('.')
     const subdomain = parts[0]
-    
-    console.log('[MIDDLEWARE] Subdomain detection:', {
+
+    console.log('[PROXY] Subdomain detection:', {
       hostname,
       hostnameWithoutPort,
       productionDomain,
@@ -108,13 +108,13 @@ export function middleware(request: NextRequest) {
       extractedSubdomain: subdomain,
       pathname,
     })
-    
+
     // Validate subdomain (must not be reserved)
     const reservedSubdomains = ['www', 'app', 'turestaurantedigital', 'api']
     if (subdomain && !reservedSubdomains.includes(subdomain.toLowerCase())) {
       // Rewrite to /[slug]. app/(storefront)/[slug] maps to /[slug], NOT /storefront/[slug]
       const newPath = `/${subdomain}${pathname === '/' ? '' : pathname}`
-      console.log('[MIDDLEWARE] Rewriting subdomain -> [slug]:', {
+      console.log('[PROXY] Rewriting subdomain -> [slug]:', {
         from: pathname,
         to: newPath,
         subdomain,
@@ -123,13 +123,13 @@ export function middleware(request: NextRequest) {
       url.pathname = newPath
       return NextResponse.rewrite(url)
     } else {
-      console.log('[MIDDLEWARE] Subdomain is reserved, skipping:', {
+      console.log('[PROXY] Subdomain is reserved, skipping:', {
         subdomain,
         reservedSubdomains,
       })
     }
   } else {
-    console.log('[MIDDLEWARE] Not a subdomain match:', {
+    console.log('[PROXY] Not a subdomain match:', {
       hostname,
       hostnameWithoutPort,
       productionDomain,
@@ -145,7 +145,7 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except: api, _next/static, _next/image, favicon.ico
-     * Include / explicitly so subdomain root (lateburger.turestaurantedigital.com/) runs middleware
+     * Include / explicitly so subdomain root (lateburger.turestaurantedigital.com/) runs proxy
      */
     '/',
     '/((?!api|_next/static|_next/image|favicon.ico).*)',

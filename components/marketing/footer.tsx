@@ -100,8 +100,16 @@ export function Footer() {
             <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
+                  href="/about"
+                  className="text-sm text-gray-600 hover:text-[#FF6B00] transition-colors"
+                >
+                  Acerca de
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/support"
-                  className="text-sm text-gray-600 hover:text-[#FF5F1F] transition-colors"
+                  className="text-sm text-gray-600 hover:text-[#FF6B00] transition-colors"
                 >
                   Centro de Ayuda
                 </Link>
@@ -125,7 +133,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-gray-600 hover:text-[#FF5F1F] transition-colors"
+                  className="text-sm text-gray-600 hover:text-[#FF6B00] transition-colors"
                 >
                   Contacto
                 </Link>

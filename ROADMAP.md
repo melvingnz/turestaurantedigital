@@ -692,7 +692,7 @@ useEffect(() => {
 
 ### Archivos Clave
 - `supabase/schema.sql` - Schema de base de datos
-- `middleware.ts` - Routing inteligente
+- `proxy.ts` - Routing inteligente
 - `types/database.ts` - Tipos TypeScript
 - `app/actions/` - Server Actions
 
