@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+  <!-- R: stem + bowl + leg. Dark. Transparent background. -->
+  <path d="M10 8h5c4.4 0 8 3.6 8 8s-3.6 8-8 8h-1v8H10V8zm4 4v8h1c2.2 0 4-1.8 4-4s-1.8-4-4-4h-1z" fill="#1A1A1A"/>
+  <path d="M15 20l7 12h4l-5-8h1c2.2 0 4-1.8 4-4s-1.8-4-4-4h-7v4z" fill="#1A1A1A"/>
+  <!-- Orange flame / blade accent -->
+  <circle cx="25" cy="11" r="2.5" fill="#FF6B00"/>
+</svg>

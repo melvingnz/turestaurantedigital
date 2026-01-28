@@ -13,6 +13,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Tu Restaurante Digital",
   description: "La experiencia digital completa para tu restaurante",
+  icons: { icon: "/branding/logo-a-r-stylized.png" },
 }
 
 export default function RootLayout({
