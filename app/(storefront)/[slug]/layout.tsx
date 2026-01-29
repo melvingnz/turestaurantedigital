@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getTenantBySlug } from '@/lib/api'
 import { CartProvider } from '@/components/storefront/cart-context'
 import { LATE_BURGER_TENANT } from '@/lib/mock-data'
+import { logger } from '@/lib/logger'
 
 export default async function StorefrontLayout({
   children,
@@ -18,8 +19,7 @@ export default async function StorefrontLayout({
     notFound()
   }
 
-  // DEBUG
-  console.log('[STOREFRONT LAYOUT]', { slug, paramsType: typeof params })
+  logger.debug('[Storefront] Layout', { slug, paramsType: typeof params })
 
   // TODO: Replace with Supabase fetch when ready
   // For now, use mock data for Late Burger pilot

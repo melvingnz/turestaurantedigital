@@ -1,39 +1,36 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { createServerClient as createSupabaseServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  console.warn('⚠️  Missing Supabase environment variables. Please configure .env.local')
+  logger.warn('[Supabase] Missing env: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. Configure .env.local')
 }
 
 export async function createServerClient() {
   const cookieStore = await cookies()
-  
-  return createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey, {
-    // @ts-expect-error - Supabase cookies API type issue
+
+  return createSupabaseServerClient<Database>(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
       },
-      setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
+      setAll(cookiesToSet: Array<{ name: string; value: string; options?: object }>) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
+            cookieStore.set(name, value, options ?? {})
           )
-        } catch {
-          // The `setAll` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing
-          // user sessions.
+        } catch (e) {
+          logger.warn('[Supabase] setAll failed (cookies not set)', (e as Error)?.message)
         }
       },
     },
   })
 }
 
-// Alias para compatibilidad con auth.ts (async)
 export async function createClient() {
   return createServerClient()
 }

@@ -20,6 +20,7 @@ export default function SignupPage() {
     password: '',
     restaurantName: '',
     slug: '',
+    hasCustomDomain: false,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,25 +41,37 @@ export default function SignupPage() {
       return
     }
 
-    const result = await signupWithTenant(formData)
+    const result = await signupWithTenant({
+      ...formData,
+      hasCustomDomain: formData.hasCustomDomain,
+    })
 
     if (result.success) {
-      // Redirigir al dashboard
-      router.push('/app/dashboard')
+      router.push('/marketing/confirmemail')
     } else {
       setError(result.error || 'Error al crear la cuenta')
       setLoading(false)
     }
   }
 
+  /** Genera slug desde el nombre: minúsculas, todo pegado (sin espacios ni guiones). Ej: "Pau Delicias" → "paudelicias" */
+  const slugFromName = (name: string) =>
+    name
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // quitar acentos
+      .replace(/[^a-z0-9]/g, '')
+      .slice(0, 30)
+
   const handleSlugChange = (value: string) => {
-    // Convertir a minúsculas y reemplazar espacios y caracteres especiales
+    // Edición manual del slug: minúsculas, solo letras, números y guiones
     const slug = value
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '')
-
+      .slice(0, 30)
     setFormData({ ...formData, slug })
   }
 
@@ -127,17 +140,19 @@ export default function SignupPage() {
               <Input
                 id="restaurantName"
                 type="text"
-                placeholder="Ej: Late Burger"
+                placeholder="Tu Restaurante"
                 value={formData.restaurantName}
                 onChange={(e) => {
-                  setFormData({ ...formData, restaurantName: e.target.value })
-                  // Auto-generar slug si está vacío
-                  if (!formData.slug) {
-                    handleSlugChange(e.target.value)
-                  }
+                  const name = e.target.value
+                  setFormData({
+                    ...formData,
+                    restaurantName: name,
+                    slug: slugFromName(name),
+                  })
                 }}
                 required
                 disabled={loading}
+                className="placeholder:text-[#1A1A1A]/40"
               />
             </div>
 
@@ -152,7 +167,7 @@ export default function SignupPage() {
                 <Input
                   id="slug"
                   type="text"
-                  placeholder="lateburger"
+                  placeholder="turestaurante"
                   value={formData.slug}
                   onChange={(e) => handleSlugChange(e.target.value)}
                   required
@@ -160,11 +175,45 @@ export default function SignupPage() {
                   minLength={3}
                   maxLength={30}
                   disabled={loading}
-                  className="flex-1"
+                  className="flex-1 placeholder:text-[#1A1A1A]/40"
                 />
               </div>
               <p className="text-xs text-[#1A1A1A]/50">
-                Tu menú estará disponible en: {formData.slug || 'tu-slug'}.turestaurantedigital.com
+                Tu menú estará disponible en: {formData.slug || 'turestaurante'}.turestaurantedigital.com
+              </p>
+            </div>
+
+            {/* ¿Tienes dominio propio? */}
+            <div className="space-y-3">
+              <Label>¿Tienes dominio propio para tu restaurante?</Label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="hasCustomDomain"
+                    checked={!formData.hasCustomDomain}
+                    onChange={() => setFormData({ ...formData, hasCustomDomain: false })}
+                    disabled={loading}
+                    className="text-[#FF6B00] focus:ring-[#FF6B00]"
+                  />
+                  <span className="text-sm text-[#1A1A1A]">No, usar subdominio</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="hasCustomDomain"
+                    checked={formData.hasCustomDomain}
+                    onChange={() => setFormData({ ...formData, hasCustomDomain: true })}
+                    disabled={loading}
+                    className="text-[#FF6B00] focus:ring-[#FF6B00]"
+                  />
+                  <span className="text-sm text-[#1A1A1A]">Sí, tengo dominio propio</span>
+                </label>
+              </div>
+              <p className="text-xs text-[#1A1A1A]/50">
+                {formData.hasCustomDomain
+                  ? 'Nos pondremos en contacto para configurarlo. Mientras tanto usarás el subdominio.'
+                  : `Te configuramos ${formData.slug || 'turestaurante'}.turestaurantedigital.com automáticamente.`}
               </p>
             </div>
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createProduct, getProducts } from '@/app/actions/products'
 import type { ProductInsert } from '@/types/database'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
     const products = await getProducts(tenantId)
     return NextResponse.json(products)
   } catch (error) {
-    console.error('Error fetching products:', error)
+    logger.error('[API Products] Error fetching products', error)
     return NextResponse.json(
       { message: error instanceof Error ? error.message : 'Failed to fetch products' },
       { status: 500 }
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     const product = await createProduct(body)
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
-    console.error('Error creating product:', error)
+    logger.error('[API Products] Error creating product', error)
     return NextResponse.json(
       { message: error instanceof Error ? error.message : 'Failed to create product' },
       { status: 500 }

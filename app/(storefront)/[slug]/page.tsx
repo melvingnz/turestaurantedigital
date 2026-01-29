@@ -3,6 +3,7 @@ import { LateBurgerStorefront } from '@/components/storefront/late-burger-storef
 import { StorefrontClient } from '@/components/storefront/storefront-client'
 import { LATE_BURGER_TENANT, LATE_BURGER_PRODUCTS } from '@/lib/mock-data'
 import { notFound } from 'next/navigation'
+import { logger } from '@/lib/logger'
 
 export default async function StorefrontPage({
   params,
@@ -18,15 +19,14 @@ export default async function StorefrontPage({
     notFound()
   }
 
-  // DEBUG
-  console.log('[STOREFRONT PAGE]', { slug, paramsType: typeof params })
+  logger.debug('[Storefront] Page', { slug, paramsType: typeof params })
 
   // HARDCODED FALLBACK: Always use mock data for Late Burger
   // DO NOT rely on Supabase for Late Burger in production
   const isLateBurger = slug === 'lateburger' || slug?.toLowerCase() === 'lateburger'
   
   if (isLateBurger) {
-    console.log('[STOREFRONT PAGE] Using Late Burger mock data')
+    logger.debug('[Storefront] Using Late Burger mock data', { slug })
     return (
       <LateBurgerStorefront
         tenant={LATE_BURGER_TENANT}

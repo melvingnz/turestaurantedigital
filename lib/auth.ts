@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { logger } from '@/lib/logger'
 
 /**
  * Verificar si el usuario está autenticado
- * Redirige a /login si no está autenticado
+ * Redirige a /marketing/login si no está autenticado
  */
 export async function requireAuth() {
   const supabase = await createClient()
@@ -12,7 +13,8 @@ export async function requireAuth() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    logger.warn('[Auth] requireAuth: no user, redirecting to /marketing/login')
+    redirect('/marketing/login')
   }
 
   return user
@@ -48,7 +50,7 @@ export async function getAuthTenant() {
   // Solo mostrar error si no es un error de tabla no encontrada (PGRST205)
   // Esto es común durante desarrollo cuando la tabla aún no existe
   if (error && error.code !== 'PGRST205') {
-    console.error('Error fetching tenant:', error)
+    logger.error('[Auth] Error fetching tenant', { code: error.code, message: error.message })
   }
 
   return tenant

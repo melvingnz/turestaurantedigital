@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getAuthTenant } from '@/lib/auth'
 import type { TenantUpdate } from '@/types/database'
 import { revalidatePath } from 'next/cache'
+import { logger } from '@/lib/logger'
 
 /**
  * Obtener el tenant actual del usuario autenticado
@@ -37,7 +38,7 @@ export async function updateTenant(updates: TenantUpdate) {
     if (error.code === 'PGRST205') {
       throw new Error('La tabla de restaurantes no está configurada. Por favor, ejecuta el schema SQL en Supabase.')
     }
-    console.error('Error updating tenant:', error)
+    logger.error('[Tenant] Error updating tenant', { code: error.code, message: error.message })
     throw new Error(`Error al actualizar: ${error.message}`)
   }
 

@@ -28,6 +28,7 @@ export interface Tenant {
   logo_url: string | null
   brand_color: string // Default: '#FF5F1F'
   owner_id: string // UUID, references auth.users
+  has_custom_domain: boolean // Onboarding: si tiene dominio propio, TRD lo gestiona
 }
 
 /**
@@ -87,6 +88,7 @@ export interface TenantInsert {
   logo_url?: string | null
   brand_color?: string
   owner_id: string
+  has_custom_domain?: boolean
 }
 
 export interface ProductInsert {
@@ -125,6 +127,7 @@ export interface TenantUpdate {
   slug?: string
   logo_url?: string | null
   brand_color?: string
+  has_custom_domain?: boolean
 }
 
 export interface ProductUpdate {

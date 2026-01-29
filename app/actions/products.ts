@@ -2,26 +2,33 @@
 
 import { createServerClient } from '@/lib/supabase/server'
 import type { Product, ProductInsert, ProductUpdate } from '@/types/database'
+import { logger } from '@/lib/logger'
 
 /**
  * Get all products for a tenant
  */
 export async function getProducts(tenantId: string): Promise<Product[]> {
-  const supabase = await createServerClient()
-  
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    // @ts-expect-error - Supabase type inference issue
-    .eq('tenant_id', tenantId)
-    .order('created_at', { ascending: false })
+  try {
+    const supabase = await createServerClient()
 
-  if (error) {
-    console.error('Error fetching products:', error)
-    throw new Error(`Failed to fetch products: ${error.message}`)
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      // @ts-expect-error - Supabase type inference issue
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      logger.error('[Products] Error fetching products', { tenantId, code: error.code, message: error.message })
+      return []
+    }
+
+    return (data as unknown as Product[]) || []
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    logger.error('[Products] Fetch failed (network or Supabase)', { tenantId, message })
+    return []
   }
-
-  return (data as unknown as Product[]) || []
 }
 
 /**
@@ -38,7 +45,7 @@ export async function getProduct(id: string): Promise<Product | null> {
     .single()
 
   if (error) {
-    console.error('Error fetching product:', error)
+    logger.error('[Products] Error fetching product', { id, code: error.code, message: error.message })
     return null
   }
 
@@ -59,7 +66,7 @@ export async function createProduct(product: ProductInsert): Promise<Product> {
     .single()
 
   if (error) {
-    console.error('Error creating product:', error)
+    logger.error('[Products] Error creating product', { code: error.code, message: error.message })
     throw new Error(`Failed to create product: ${error.message}`)
   }
 
@@ -89,7 +96,7 @@ export async function updateProduct(
     .single()
 
   if (error) {
-    console.error('Error updating product:', error)
+    logger.error('[Products] Error updating product', { id, code: error.code, message: error.message })
     throw new Error(`Failed to update product: ${error.message}`)
   }
 
@@ -113,7 +120,7 @@ export async function deleteProduct(id: string): Promise<void> {
     .eq('id', id)
 
   if (error) {
-    console.error('Error deleting product:', error)
+    logger.error('[Products] Error deleting product', { id, code: error.code, message: error.message })
     throw new Error(`Failed to delete product: ${error.message}`)
   }
 }

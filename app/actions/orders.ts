@@ -2,6 +2,7 @@
 
 import { createServerClient } from '@/lib/supabase/server'
 import type { Order, OrderInsert, OrderItemInsert, OrderWithItems } from '@/types/database'
+import { logger } from '@/lib/logger'
 
 /**
  * Create a new order with items
@@ -21,7 +22,7 @@ export async function placeOrder(
     .single()
 
   if (orderError || !order) {
-    console.error('Error creating order:', orderError)
+    logger.error('[Orders] Error creating order', { message: orderError?.message })
     throw new Error(`Failed to create order: ${orderError?.message || 'Unknown error'}`)
   }
 
@@ -43,7 +44,7 @@ export async function placeOrder(
     .insert(orderItems)
 
   if (itemsError) {
-    console.error('Error creating order items:', itemsError)
+    logger.error('[Orders] Error creating order items', { orderId: validOrder.id, message: itemsError.message })
     // Try to clean up the order if items failed
     // @ts-expect-error - Supabase type inference issue
     await supabase.from('orders').delete().eq('id', validOrder.id)
@@ -57,73 +58,79 @@ export async function placeOrder(
  * Get orders for a tenant with order items
  */
 export async function getOrdersWithItems(tenantId: string): Promise<OrderWithItems[]> {
-  const supabase = await createServerClient()
-  
-  const { data: orders, error: ordersError } = await supabase
-    .from('orders')
-    .select('*')
-    // @ts-expect-error - Supabase type inference issue
-    .eq('tenant_id', tenantId)
-    .order('created_at', { ascending: false })
+  try {
+    const supabase = await createServerClient()
 
-  if (ordersError) {
-    console.error('Error fetching orders:', ordersError)
-    throw new Error(`Failed to fetch orders: ${ordersError.message}`)
-  }
+    const { data: orders, error: ordersError } = await supabase
+      .from('orders')
+      .select('*')
+      // @ts-expect-error - Supabase type inference issue
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: false })
 
-  if (!orders || orders.length === 0) {
+    if (ordersError) {
+      logger.error('[Orders] Error fetching orders', { tenantId, message: ordersError.message })
+      return []
+    }
+
+    if (!orders || orders.length === 0) {
+      return []
+    }
+
+    // Type guard para asegurar que orders es válido
+    const validOrders = orders as unknown as Order[]
+
+    // Fetch order items for all orders
+    const orderIds = validOrders.map((o) => o.id)
+    const { data: orderItems, error: itemsError } = await supabase
+      .from('order_items')
+      .select('*, products(*)')
+      // @ts-expect-error - Supabase type inference issue
+      .in('order_id', orderIds)
+
+    if (itemsError) {
+      logger.error('[Orders] Error fetching order items', { message: itemsError.message })
+      return []
+    }
+
+    // Combine orders with their items
+    const validOrderItems = (orderItems as unknown as Array<{
+      id: string
+      order_id: string
+      product_id: string
+      quantity: number
+      price: number
+      notes: string | null
+      created_at: string
+      products: any
+    }> | null) || []
+
+    const ordersWithItems: OrderWithItems[] = validOrders.map((order) => {
+      const items = validOrderItems
+        .filter((item) => item.order_id === order.id)
+        .map((item) => ({
+          id: item.id,
+          order_id: item.order_id,
+          product_id: item.product_id,
+          quantity: item.quantity,
+          price: item.price,
+          notes: item.notes,
+          created_at: item.created_at,
+          product: item.products as any, // Type assertion for joined product
+        }))
+
+      return {
+        ...order,
+        items,
+      }
+    })
+
+    return ordersWithItems
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    logger.error('[Orders] Fetch failed (network or Supabase)', { tenantId, message })
     return []
   }
-
-  // Type guard para asegurar que orders es válido
-  const validOrders = orders as unknown as Order[]
-
-  // Fetch order items for all orders
-  const orderIds = validOrders.map((o) => o.id)
-  const { data: orderItems, error: itemsError } = await supabase
-    .from('order_items')
-    .select('*, products(*)')
-    // @ts-expect-error - Supabase type inference issue
-    .in('order_id', orderIds)
-
-  if (itemsError) {
-    console.error('Error fetching order items:', itemsError)
-    throw new Error(`Failed to fetch order items: ${itemsError.message}`)
-  }
-
-  // Combine orders with their items
-  const validOrderItems = (orderItems as unknown as Array<{
-    id: string
-    order_id: string
-    product_id: string
-    quantity: number
-    price: number
-    notes: string | null
-    created_at: string
-    products: any
-  }> | null) || []
-
-  const ordersWithItems: OrderWithItems[] = validOrders.map((order) => {
-    const items = validOrderItems
-      .filter((item) => item.order_id === order.id)
-      .map((item) => ({
-        id: item.id,
-        order_id: item.order_id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price,
-        notes: item.notes,
-        created_at: item.created_at,
-        product: item.products as any, // Type assertion for joined product
-      }))
-    
-    return {
-      ...order,
-      items,
-    }
-  })
-
-  return ordersWithItems
 }
 
 /**
@@ -145,7 +152,7 @@ export async function updateOrderStatus(
     .single()
 
   if (error) {
-    console.error('Error updating order status:', error)
+    logger.error('[Orders] Error updating order status', { orderId, status, message: error.message })
     throw new Error(`Failed to update order status: ${error.message}`)
   }
 
@@ -170,7 +177,7 @@ export async function getOrders(tenantId: string): Promise<Order[]> {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching orders:', error)
+    logger.error('[Orders] Error fetching orders', { tenantId, message: error.message })
     throw new Error(`Failed to fetch orders: ${error.message}`)
   }
 

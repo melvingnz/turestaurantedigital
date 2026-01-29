@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { logger } from '@/lib/logger'
 
 /**
  * Upload file to Supabase Storage
@@ -19,7 +20,7 @@ export async function uploadFile(
     })
 
     if (error) {
-      console.error('Error uploading file:', error)
+      logger.error('[Storage] Upload failed', { bucket, path, message: error.message })
       return { url: null, error: error.message }
     }
 
@@ -30,7 +31,7 @@ export async function uploadFile(
 
     return { url: publicUrl, error: null }
   } catch (error) {
-    console.error('Unexpected error uploading file:', error)
+    logger.error('[Storage] Unexpected upload error', { bucket, path, message: (error as Error)?.message })
     return {
       url: null,
       error: error instanceof Error ? error.message : 'Error desconocido al subir el archivo',
@@ -51,13 +52,13 @@ export async function deleteFile(
     const { error } = await supabase.storage.from(bucket).remove([path])
 
     if (error) {
-      console.error('Error deleting file:', error)
+      logger.error('[Storage] Delete failed', { bucket, path, message: error.message })
       return { success: false, error: error.message }
     }
 
     return { success: true, error: null }
   } catch (error) {
-    console.error('Unexpected error deleting file:', error)
+    logger.error('[Storage] Unexpected delete error', { bucket, path, message: (error as Error)?.message })
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Error desconocido al eliminar el archivo',

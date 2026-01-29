@@ -143,6 +143,7 @@ El formulario de contacto envía a `contacto@turestaurantedigital.com`. Para pro
    - Ejecuta los scripts en este orden:
      1. `supabase/schema.sql` - Schema principal
      2. `supabase/storage.sql` - Configuración de Storage
+     3. Migración onboarding: `npm run db:update` → imprime el SQL; ejecútalo en Supabase → SQL Editor (o usa `supabase/TENANTS_ADD_HAS_CUSTOM_DOMAIN.sql`)
    
    Ver `supabase/README.md` para instrucciones detalladas.
 
@@ -183,7 +184,7 @@ Configura los buckets necesarios:
 
 **Nota**: Para producción, las imágenes deberían estar en Supabase Storage en lugar de `/public/images/`. Ver `MIGRATE_IMAGES_TO_SUPABASE.md` para instrucciones.
 
-Ver `supabase/STORAGE_SETUP.md` para instrucciones completas.
+Ver `supabase/STORAGE_SETUP.md` para instrucciones completas. Formato de URLs y “personalidad” TRD: `supabase/STORAGE_URLS.md`.
 
 ### Branding Late Burger
 
@@ -400,6 +401,9 @@ Si `npm run clean` falla con `EPERM` o `EBUSY`, algún proceso sigue usando `.ne
 - `MIGRATE_IMAGES_TO_SUPABASE.md` - Migrar imágenes a Supabase Storage
 - `FIX_VERCEL_ENOENT.md` - Solución para errores ENOENT en Vercel
 - `supabase/STORAGE_SETUP.md` - Configuración de Supabase Storage
+- `supabase/STORAGE_COMO_FUNCIONA.md` - Storage: qué es, qué hacer, cómo funciona
+- `supabase/STORAGE_URLS.md` - URLs de Storage y personalidad TRD
+- `ADMIN_PORTAL_GUIDE.md` - Guía para probar el Admin y onboarding
 
 ## 🤝 Contribución
 

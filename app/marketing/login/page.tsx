@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,12 +12,17 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
+
+  // No redirect when client has session: session lives in localStorage but server uses cookies.
+  // Auto-redirect caused login↔dashboard loop (requireAuth redirects to login, client redirects back).
+  // User must submit login form so server sets cookies, then we redirect to dashboard.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,8 +40,10 @@ export default function LoginPage() {
     if (!result.success) {
       setError(result.error || 'Error al iniciar sesión')
       setLoading(false)
+      return
     }
-    // Si es exitoso, signIn redirige automáticamente
+    router.refresh()
+    router.replace('/app/dashboard')
   }
 
   return (

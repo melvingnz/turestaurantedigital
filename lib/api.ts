@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import type { Tenant, Product } from '@/types/database'
+import { logger } from '@/lib/logger'
 
 /**
  * Get tenant by slug
@@ -31,10 +32,8 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
     .maybeSingle()
 
   if (error) {
-    // Solo mostrar error si no es un error de tabla no encontrada (PGRST205)
-    // Esto es común durante desarrollo cuando la tabla aún no existe
     if (error.code !== 'PGRST205') {
-      console.error('Error fetching tenant:', error)
+      logger.error('[API] Error fetching tenant', { code: error.code, message: error.message, slug })
     }
     return null
   }
@@ -59,7 +58,7 @@ export async function getActiveProducts(tenantId: string): Promise<Product[]> {
     .order('name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching products:', error)
+    logger.error('[API] Error fetching products', { code: error.code, message: error.message, tenantId })
     return []
   }
 

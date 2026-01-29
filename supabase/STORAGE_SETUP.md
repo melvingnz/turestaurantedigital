@@ -2,6 +2,8 @@
 
 Este documento explica cómo configurar Supabase Storage para subir imágenes directamente desde la aplicación.
 
+> **¿Qué es Storage y qué tengo que hacer?** Lee **`STORAGE_COMO_FUNCIONA.md`** para una guía corta. Este doc es el detalle de configuración.
+
 ## 📋 Requisitos Previos
 
 1. Proyecto de Supabase creado

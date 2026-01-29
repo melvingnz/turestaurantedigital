@@ -1,15 +1,30 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createAdminClient, deleteUserForRollback, hasServiceRoleKey } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { logger } from '@/lib/logger'
+
+/** Base URL para redirects de confirmación de email. Producción: siempre dominio público, nunca localhost. */
+const PRODUCTION_SITE_URL = 'https://www.turestaurantedigital.com'
+const CONFIRM_PATH = '/marketing/accountconfirmed'
+
+function getEmailRedirectTo(): string {
+  const isProd = process.env.NODE_ENV === 'production'
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  const base = isProd
+    ? (fromEnv && !fromEnv.includes('localhost') ? fromEnv : PRODUCTION_SITE_URL)
+    : (fromEnv || 'http://localhost:3000')
+  return `${base.replace(/\/$/, '')}${CONFIRM_PATH}`
+}
 
 export interface SignupData {
   email: string
   password: string
   restaurantName: string
   slug: string
+  hasCustomDomain: boolean
 }
 
 export interface SignupResult {
@@ -66,7 +81,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
       email: data.email,
       password: data.password,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/app/dashboard`,
+        emailRedirectTo: getEmailRedirectTo(),
       },
     })
 
@@ -94,15 +109,14 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 
     // Si hay un error de tabla no encontrada (PGRST205), continuar (tabla no existe aún)
     if (checkError && checkError.code !== 'PGRST205') {
-      console.error('Error checking slug availability:', checkError)
+      logger.error('[Auth] Error checking slug availability', { code: checkError.code, message: checkError.message })
     }
 
     if (existingTenant) {
-      // Rollback: Eliminar el usuario creado usando admin client
-      const adminClient = createAdminClient()
-      const { error: deleteError } = await adminClient.auth.admin.deleteUser(authData.user.id)
-      if (deleteError) {
-        console.error('Error al eliminar usuario después de rollback:', deleteError)
+      if (hasServiceRoleKey()) {
+        await deleteUserForRollback(authData.user.id)
+      } else {
+        logger.warn('[Auth] Rollback skipped: missing SUPABASE_SERVICE_ROLE_KEY. User remains in Auth.')
       }
       return {
         success: false,
@@ -110,25 +124,26 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
       }
     }
 
-    // PASO 3: Crear tenant en la base de datos
-    const { data: tenantData, error: tenantError } = await supabase
+    // PASO 3: Crear tenant en la base de datos (admin bypass RLS; la sesión del user puede no estar lista en la misma petición)
+    const admin = createAdminClient()
+    const { data: tenantData, error: tenantError } = await admin
       .from('tenants')
       // @ts-expect-error - Supabase type inference issue
       .insert({
         name: data.restaurantName,
         slug: data.slug.toLowerCase(),
         owner_id: authData.user.id,
-        brand_color: '#FF5F1F', // Color por defecto
+        brand_color: '#FF5F1F',
+        has_custom_domain: !!data.hasCustomDomain,
       })
       .select()
       .single()
 
     if (tenantError) {
-      // Rollback: Eliminar el usuario creado usando admin client
-      const adminClient = createAdminClient()
-      const { error: deleteError } = await adminClient.auth.admin.deleteUser(authData.user.id)
-      if (deleteError) {
-        console.error('Error al eliminar usuario después de rollback:', deleteError)
+      if (hasServiceRoleKey()) {
+        await deleteUserForRollback(authData.user.id)
+      } else {
+        logger.warn('[Auth] Rollback skipped: missing SUPABASE_SERVICE_ROLE_KEY. User remains in Auth.')
       }
       return {
         success: false,
@@ -155,7 +170,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
       },
     }
   } catch (error) {
-    console.error('Error inesperado en signup:', error)
+    logger.error('[Auth] Unexpected signup error', error)
     return {
       success: false,
       error: 'Ocurrió un error inesperado. Por favor intenta de nuevo.',
@@ -165,6 +180,8 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 
 /**
  * Login Flow
+ * No redirige desde el server: devuelve success y el cliente hace refresh + replace.
+ * Evita bucle login ↔ dashboard cuando las cookies no se ven igual en server/client.
  */
 export async function signIn(email: string, password: string) {
   const supabase = await createClient()
@@ -175,15 +192,24 @@ export async function signIn(email: string, password: string) {
   })
 
   if (error) {
-    return {
-      success: false,
-      error: error.message || 'Error al iniciar sesión',
-    }
+    logger.error('[Auth] signIn error', {
+      message: error.message,
+      status: (error as { status?: number }).status,
+      code: (error as { code?: string }).code,
+      email: email.replace(/^(.{2}).*@/, '$1***@'),
+    })
+    const msg = error.message || 'Error al iniciar sesión'
+    const friendly =
+      msg.toLowerCase().includes('invalid login credentials')
+        ? 'Correo o contraseña incorrectos. Si acabas de registrarte, revisa tu correo y confirma tu cuenta con el enlace que te enviamos.'
+        : msg
+    return { success: false, error: friendly }
   }
 
   if (data.user) {
     revalidatePath('/app/dashboard')
-    redirect('/app/dashboard')
+    logger.info('[Auth] signIn success, redirecting to /app/dashboard')
+    return { success: true }
   }
 
   return {
@@ -236,7 +262,7 @@ export async function getCurrentTenant() {
   // Solo mostrar error si no es un error de tabla no encontrada (PGRST205)
   // Esto es común durante desarrollo cuando la tabla aún no existe
   if (error && error.code !== 'PGRST205') {
-    console.error('Error fetching tenant:', error)
+    logger.error('[Auth] Error fetching tenant', { code: error.code, message: error.message })
   }
 
   return tenant
