@@ -46,7 +46,6 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   const { count: totalProducts } = await supabase
     .from('products')
     .select('*', { count: 'exact', head: true })
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
 
   // Órdenes de hoy
