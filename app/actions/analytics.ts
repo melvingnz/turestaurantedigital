@@ -52,40 +52,32 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   const { count: ordersToday } = await supabase
     .from('orders')
     .select('*', { count: 'exact', head: true })
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', todayStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   // Órdenes de esta semana
   const { count: ordersThisWeek } = await supabase
     .from('orders')
     .select('*', { count: 'exact', head: true })
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', weekStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   // Órdenes de este mes
   const { count: ordersThisMonth } = await supabase
     .from('orders')
     .select('*', { count: 'exact', head: true })
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', monthStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   // Ingresos de hoy
   const { data: ordersTodayData } = await supabase
     .from('orders')
     .select('total_amount')
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', todayStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   const revenueToday =
@@ -98,10 +90,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   const { data: ordersWeekData } = await supabase
     .from('orders')
     .select('total_amount')
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', weekStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   const revenueThisWeek =
@@ -114,10 +104,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   const { data: ordersMonthData } = await supabase
     .from('orders')
     .select('total_amount')
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', monthStart.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   const revenueThisMonth =
@@ -137,10 +125,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   const { data: recentOrders } = await supabase
     .from('orders')
     .select('id')
-    // @ts-expect-error - Supabase type inference issue
     .eq('tenant_id', tenantId)
     .gte('created_at', thirtyDaysAgo.toISOString())
-    // @ts-expect-error - Supabase type inference issue
     .neq('status', 'cancelled')
 
   const orderIds = (recentOrders as Array<{ id: string }> | null)?.map((o) => o.id) || []
@@ -156,7 +142,6 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
     const { data: orderItems } = await supabase
       .from('order_items')
       .select('product_id, quantity, price')
-      // @ts-expect-error - Supabase type inference issue
       .in('order_id', orderIds)
 
     if (orderItems) {
@@ -188,7 +173,6 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
       const { data: products } = await supabase
         .from('products')
         .select('id, name')
-        // @ts-expect-error - Supabase type inference issue
         .in('id', productIds)
 
       if (products) {
@@ -220,12 +204,10 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
     const { data: dayOrders, count: dayOrdersCount } = await supabase
       .from('orders')
       .select('total_amount', { count: 'exact' })
-      // @ts-expect-error - Supabase type inference issue
-    .eq('tenant_id', tenantId)
+      .eq('tenant_id', tenantId)
       .gte('created_at', dateStart.toISOString())
       .lte('created_at', dateEnd.toISOString())
-      // @ts-expect-error - Supabase type inference issue
-    .neq('status', 'cancelled')
+      .neq('status', 'cancelled')
 
     const dayRevenue =
       (dayOrders as Array<{ total_amount: number }> | null)?.reduce(
