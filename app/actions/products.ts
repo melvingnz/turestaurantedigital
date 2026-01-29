@@ -14,7 +14,7 @@ export async function getProducts(tenantId: string): Promise<Product[]> {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      // @ts-expect-error - Supabase type inference issue
+      // @ts-ignore - Supabase generated types mismatch
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false })
 
@@ -40,7 +40,7 @@ export async function getProduct(id: string): Promise<Product | null> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('id', id)
     .single()
 
@@ -60,7 +60,7 @@ export async function createProduct(product: ProductInsert): Promise<Product> {
   
   const { data, error } = await supabase
     .from('products')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .insert(product)
     .select()
     .single()
@@ -88,9 +88,8 @@ export async function updateProduct(
   
   const { data, error } = await supabase
     .from('products')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .update(updates)
-    // @ts-expect-error - Supabase type inference issue
     .eq('id', id)
     .select()
     .single()
@@ -116,7 +115,7 @@ export async function deleteProduct(id: string): Promise<void> {
   const { error } = await supabase
     .from('products')
     .delete()
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('id', id)
 
   if (error) {

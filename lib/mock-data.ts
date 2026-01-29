@@ -13,6 +13,7 @@ export const LATE_BURGER_TENANT: Tenant = {
   logo_url: '/images/Logo_500x500.jpg', // Official Late Burger Logo
   brand_color: '#0FA8D8', // Official Brand Blue
   owner_id: 'mock-owner-id',
+  has_custom_domain: false,
 }
 
 export const LATE_BURGER_PRODUCTS: Product[] = [

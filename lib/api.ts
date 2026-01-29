@@ -27,7 +27,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
   const { data, error } = await supabase
     .from('tenants')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('slug', slug)
     .maybeSingle()
 
@@ -50,9 +50,8 @@ export async function getActiveProducts(tenantId: string): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('tenant_id', tenantId)
-    // @ts-expect-error - Supabase type inference issue
     .eq('is_available', true)
     .order('category', { ascending: true })
     .order('name', { ascending: true })

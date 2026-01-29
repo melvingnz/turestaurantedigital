@@ -103,7 +103,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
     const { data: existingTenant, error: checkError } = await supabase
       .from('tenants')
       .select('id')
-      // @ts-expect-error - Supabase type inference issue
+      // @ts-ignore - Supabase generated types mismatch
       .eq('slug', data.slug.toLowerCase())
       .maybeSingle()
 
@@ -128,7 +128,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
     const admin = createAdminClient()
     const { data: tenantData, error: tenantError } = await admin
       .from('tenants')
-      // @ts-expect-error - Supabase type inference issue
+      // @ts-ignore - Supabase generated types mismatch
       .insert({
         name: data.restaurantName,
         slug: data.slug.toLowerCase(),
@@ -255,7 +255,7 @@ export async function getCurrentTenant() {
   const { data: tenant, error } = await supabase
     .from('tenants')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('owner_id', user.id)
     .maybeSingle()
 

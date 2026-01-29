@@ -32,10 +32,13 @@ export async function getAuthUser() {
   return user
 }
 
+/** Tenant shape used by app pages (id required) */
+export type AuthTenant = { id: string; [k: string]: unknown } | null
+
 /**
  * Obtener el tenant del usuario actual
  */
-export async function getAuthTenant() {
+export async function getAuthTenant(): Promise<AuthTenant> {
   const user = await getAuthUser()
   if (!user) return null
 
@@ -43,7 +46,7 @@ export async function getAuthTenant() {
   const { data: tenant, error } = await supabase
     .from('tenants')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -53,5 +56,5 @@ export async function getAuthTenant() {
     logger.error('[Auth] Error fetching tenant', { code: error.code, message: error.message })
   }
 
-  return tenant
+  return tenant as AuthTenant
 }

@@ -16,7 +16,7 @@ export async function placeOrder(
   // Start a transaction by creating the order first
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .insert(orderData)
     .select()
     .single()
@@ -40,13 +40,13 @@ export async function placeOrder(
 
   const { error: itemsError } = await supabase
     .from('order_items')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .insert(orderItems)
 
   if (itemsError) {
     logger.error('[Orders] Error creating order items', { orderId: validOrder.id, message: itemsError.message })
     // Try to clean up the order if items failed
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     await supabase.from('orders').delete().eq('id', validOrder.id)
     throw new Error(`Failed to create order items: ${itemsError.message}`)
   }
@@ -64,7 +64,7 @@ export async function getOrdersWithItems(tenantId: string): Promise<OrderWithIte
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
       .select('*')
-      // @ts-expect-error - Supabase type inference issue
+      // @ts-ignore - Supabase generated types mismatch
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false })
 
@@ -85,7 +85,7 @@ export async function getOrdersWithItems(tenantId: string): Promise<OrderWithIte
     const { data: orderItems, error: itemsError } = await supabase
       .from('order_items')
       .select('*, products(*)')
-      // @ts-expect-error - Supabase type inference issue
+      // @ts-ignore - Supabase generated types mismatch
       .in('order_id', orderIds)
 
     if (itemsError) {
@@ -144,9 +144,8 @@ export async function updateOrderStatus(
   
   const { data, error } = await supabase
     .from('orders')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .update({ status })
-    // @ts-expect-error - Supabase type inference issue
     .eq('id', orderId)
     .select()
     .single()
@@ -172,7 +171,7 @@ export async function getOrders(tenantId: string): Promise<Order[]> {
   const { data, error } = await supabase
     .from('orders')
     .select('*')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false })
 

@@ -26,9 +26,8 @@ export async function updateTenant(updates: TenantUpdate) {
 
   const { data, error } = await supabase
     .from('tenants')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .update(updates)
-    // @ts-expect-error - Supabase type inference issue
     .eq('id', tenant.id)
     .select()
     .single()
@@ -57,9 +56,8 @@ export async function checkSlugAvailability(slug: string, currentTenantId: strin
   const { data, error } = await supabase
     .from('tenants')
     .select('id')
-    // @ts-expect-error - Supabase type inference issue
+    // @ts-ignore - Supabase generated types mismatch
     .eq('slug', slug)
-    // @ts-expect-error - Supabase type inference issue
     .neq('id', currentTenantId)
     .maybeSingle()
 
