@@ -48,17 +48,25 @@ export async function proxy(request: NextRequest) {
     hostname === 'www.turestaurantedigital.com'
   ) {
     if (pathname.startsWith('/lateburger')) return supabaseResponse
-    url.pathname = `/marketing${pathname === '/' ? '' : pathname}`
-    const res = NextResponse.rewrite(url)
-    copyCookies(supabaseResponse, res)
-    return res
+    if (pathname.startsWith('/marketing') || pathname.startsWith('/about') || pathname.startsWith('/contact')) return supabaseResponse
+    if (pathname === '/') {
+      url.pathname = '/marketing'
+      const res = NextResponse.rewrite(url)
+      copyCookies(supabaseResponse, res)
+      return res
+    }
+    return supabaseResponse
   }
 
   if (hostname.startsWith('www.')) {
-    url.pathname = `/marketing${pathname === '/' ? '' : pathname}`
-    const res = NextResponse.rewrite(url)
-    copyCookies(supabaseResponse, res)
-    return res
+    if (pathname.startsWith('/marketing') || pathname.startsWith('/about') || pathname.startsWith('/contact')) return supabaseResponse
+    if (pathname === '/') {
+      url.pathname = '/marketing'
+      const res = NextResponse.rewrite(url)
+      copyCookies(supabaseResponse, res)
+      return res
+    }
+    return supabaseResponse
   }
 
   const productionDomain = 'turestaurantedigital.com'
