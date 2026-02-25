@@ -220,12 +220,13 @@ export async function sendNewOrderNotificationToRestaurant(orderId: string): Pro
     .eq('id', tenantId)
     .single()
 
-  if (tenantError || !tenantRow?.owner_id) {
+  const ownerId = tenantRow && typeof (tenantRow as { owner_id?: string }).owner_id === 'string' ? (tenantRow as { owner_id: string }).owner_id : null
+  if (tenantError || !ownerId) {
     logger.error('[OrderEmail] Tenant/owner not found', { orderId })
     return { ok: false, error: 'Tenant not found' }
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.admin.getUserById((tenantRow as { owner_id: string }).owner_id)
+  const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(ownerId)
   if (userError || !user?.email) {
     logger.error('[OrderEmail] Owner user/email not found', { orderId })
     return { ok: false, error: 'Owner email not found' }
