@@ -1,27 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
-import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
+import { Minus, Plus, Trash2 } from 'lucide-react'
 import { useCart } from './cart-context'
-import { placeOrder } from '@/app/actions/orders'
-import type { OrderType } from '@/types/database'
 
 interface CartSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   tenantId: string
-  onOrderSuccess: () => void
+  slug: string
   primaryColor?: string
 }
 
@@ -29,14 +25,13 @@ export function CartSheet({
   open,
   onOpenChange,
   tenantId,
-  onOrderSuccess,
+  slug,
   primaryColor = '#FF5F1F',
 }: CartSheetProps) {
-  const { items, updateQuantity, removeItem, totalPrice, clearCart } = useCart()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [orderType, setOrderType] = useState<OrderType>('delivery')
-  const [formData, setFormData] = useState({ customer_name: '', customer_phone: '' })
+  const { items, updateQuantity, removeItem, totalPrice } = useCart()
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [isMobile, setIsMobile] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 639px)')
@@ -50,185 +45,154 @@ export function CartSheet({
     new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(price)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.customer_name.trim() || !formData.customer_phone.trim()) {
-      alert('Por favor completa todos los campos')
+  const goToCheckout = () => {
+    if (!termsAccepted) {
+      alert('Debes aceptar los términos y condiciones')
       return
     }
-    setIsSubmitting(true)
-    try {
-      const orderItems = items.map((item) => ({
-        product_id: item.product.id,
-        quantity: item.quantity,
-        price: item.product.price,
-      }))
-      await placeOrder(
-        {
-          tenant_id: tenantId,
-          customer_name: formData.customer_name,
-          customer_phone: formData.customer_phone,
-          type: orderType,
-          total_amount: totalPrice,
-          status: 'pending',
-        },
-        orderItems
-      )
-      clearCart()
-      setFormData({ customer_name: '', customer_phone: '' })
-      onOpenChange(false)
-      onOrderSuccess()
-    } catch (error) {
-      console.error('Error placing order:', error)
-      alert(error instanceof Error ? error.message : 'Error al realizar el pedido')
-    } finally {
-      setIsSubmitting(false)
-    }
+    onOpenChange(false)
+    router.push(`/${slug}/checkout`)
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side={isMobile ? 'bottom' : 'right'}
-        className={`
-          w-full flex flex-col p-0 overflow-hidden
-          ${isMobile ? 'h-[90vh] max-h-[90vh] rounded-t-2xl border-t' : 'h-full w-full sm:max-w-lg border-l'}
-        `}
+        className="w-full flex flex-col p-0 overflow-hidden h-full max-h-[90vh] rounded-t-2xl border-t sm:max-h-none sm:rounded-none sm:max-w-[400px] sm:border-l sm:border-t-0 border-gray-200"
       >
-        <SheetHeader className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-6 pb-2 pr-12">
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5" />
-            Mi Carrito
-          </SheetTitle>
-          <SheetDescription>
-            {items.length === 0
-              ? 'Tu carrito está vacío'
-              : `${items.length} ${items.length === 1 ? 'producto' : 'productos'}`}
-          </SheetDescription>
-        </SheetHeader>
+        {/* Header: Carrito + badge (Shopify-style). SheetTitle required for a11y. */}
+        <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-5 pt-5 pb-4 pr-12 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <SheetTitle className="text-xl font-bold text-gray-900 m-0">Carrito</SheetTitle>
+            {items.length > 0 && (
+              <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gray-200 text-gray-800 text-sm font-medium">
+                {items.reduce((acc, i) => acc + i.quantity, 0)}
+              </span>
+            )}
+          </div>
+        </div>
 
         {items.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center py-12">
-            <div className="text-center">
-              <ShoppingBag className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">No hay productos en tu carrito</p>
-            </div>
+          <div className="flex-1 flex items-center justify-center py-16 px-4">
+            <p className="text-gray-500 text-center">Tu carrito está vacío</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden min-h-0">
-            <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 space-y-4 py-4 scrollbar-hide">
-              {items.map((item) => (
-                <div
-                  key={item.product.id}
-                  className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl"
-                >
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 truncate">{item.product.name}</h4>
-                    <p className="text-sm text-gray-600" style={{ color: primaryColor }}>
-                      {formatPrice(item.product.price)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full touch-manipulation"
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <span className="w-6 sm:w-8 text-center text-sm font-medium">{item.quantity}</span>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full touch-manipulation"
-                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-red-600 touch-manipulation"
-                      onClick={() => removeItem(item.product.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-
-              <div className="space-y-4 pt-2 sm:pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cart_name">Nombre *</Label>
-                  <Input
-                    id="cart_name"
-                    value={formData.customer_name}
-                    onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
-                    placeholder="Tu nombre"
-                    required
-                    className="h-12 rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cart_phone">Teléfono *</Label>
-                  <Input
-                    id="cart_phone"
-                    type="tel"
-                    value={formData.customer_phone}
-                    onChange={(e) => setFormData({ ...formData, customer_phone: e.target.value })}
-                    placeholder="809-123-4567"
-                    required
-                    className="h-12 rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Tipo de Pedido</Label>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div>
-                      <p className="font-medium">
-                        {orderType === 'delivery' ? 'Entrega a Domicilio' : 'Recoger en Local'}
+          <div className="flex flex-col flex-1 min-h-0">
+            {/* Scrollable items */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5 py-4 space-y-5">
+              {items.map((item) => {
+                const lineTotal = item.product.price * item.quantity
+                return (
+                  <div key={item.product.id} className="flex gap-3">
+                    <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-gray-100 overflow-hidden">
+                      {item.product.image_url ? (
+                        <Image
+                          src={item.product.image_url}
+                          alt={item.product.name}
+                          width={56}
+                          height={56}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          —
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{item.product.name}</p>
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        {formatPrice(item.product.price)}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        {orderType === 'delivery' ? 'Te llevamos tu pedido' : 'Ven a recoger tu pedido'}
+                      <div className="flex items-center gap-2 mt-2">
+                        <div
+                          className="inline-flex items-center rounded-md border border-gray-300 bg-white"
+                          style={{ borderColor: primaryColor + '40' }}
+                        >
+                          <button
+                            type="button"
+                            className="p-1.5 text-gray-700 hover:bg-gray-50 rounded-l"
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium tabular-nums">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            className="p-1.5 text-gray-700 hover:bg-gray-50 rounded-r"
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          className="p-1.5 text-gray-500 hover:text-red-600"
+                          onClick={() => removeItem(item.product.id)}
+                          aria-label="Quitar"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 text-right">
+                      <p className="font-semibold text-gray-900 tabular-nums">
+                        {formatPrice(lineTotal)}
                       </p>
                     </div>
-                    <Switch
-                      checked={orderType === 'delivery'}
-                      onCheckedChange={(checked) => setOrderType(checked ? 'delivery' : 'pickup')}
-                    />
                   </div>
-                </div>
-              </div>
+                )
+              })}
             </div>
 
+            {/* Footer: total, disclaimer, terms, form, button (Shopify-style) */}
             <div
-              className={`
-                flex-shrink-0 border-t bg-white px-4 sm:px-6 py-4
-                ${isMobile ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : ''}
-              `}
+              className={`flex-shrink-0 border-t border-gray-200 bg-white px-4 sm:px-5 py-4 ${
+                isMobile ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : ''
+              }`}
             >
-              <div className="flex justify-between text-lg font-semibold mb-3">
-                <span>Total</span>
-                <span style={{ color: primaryColor }}>{formatPrice(totalPrice)}</span>
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-sm font-medium text-gray-700">Total estimado</span>
+                <span className="text-lg font-bold text-gray-900 tabular-nums">
+                  {formatPrice(totalPrice)} DOP
+                </span>
               </div>
+              <p className="text-xs text-gray-500 mb-4">
+                Impuestos, descuentos y envío calculados en la página de pago.
+              </p>
+
+              <label className="flex items-start gap-2 mb-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 rounded border-gray-300"
+                />
+                <span className="text-sm text-gray-700">
+                  Acepto todos los{' '}
+                  <Link href="/terminos" className="underline" style={{ color: primaryColor }}>
+                    términos y condiciones
+                  </Link>
+                  .
+                </span>
+              </label>
+
               <Button
-                type="submit"
-                className="w-full h-14 text-lg font-semibold text-white rounded-xl touch-manipulation active:scale-[0.98]"
+                type="button"
+                onClick={goToCheckout}
+                className="w-full h-12 font-semibold text-white rounded-md"
                 style={{ backgroundColor: primaryColor }}
-                disabled={isSubmitting}
               >
-                {isSubmitting ? 'Procesando...' : 'Realizar Pedido'}
+                Pagar
               </Button>
             </div>
-          </form>
+          </div>
         )}
       </SheetContent>
     </Sheet>

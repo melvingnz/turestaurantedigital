@@ -1,0 +1,24 @@
+<!--
+  Plantilla: Confirm signup (código de 6 dígitos)
+  Uso: Supabase Dashboard → Authentication → Email Templates → Confirm signup
+  Copia todo el contenido en "Body" y mantén {{ .Token }} (es la variable del código).
+  Asunto sugerido: Tu código de verificación — Tu Restaurante Digital
+-->
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px 16px; color: #1a1a1a; background-color: #ffffff;">
+  <!-- Marca (solo en naranja, sin línea repetida en negrita) -->
+  <p style="margin: 0 0 24px 0; font-size: 22px; font-weight: 700; color: #FF6B00; letter-spacing: 0.02em;">Bienvenido a Tu Restaurante Digital!</p>
+
+  <p style="margin: 0 0 16px 0; font-size: 16px; color: #1a1a1a; line-height: 1.6;">Estamos agradecidos de que formes parte de <strong>Nuestro Sistema Digital de Gastronomía.</strong></p>
+  <p style="margin: 0 0 24px 0; font-size: 16px; color: #1a1a1a; line-height: 1.6;">Para activar tu cuenta, introduce este código de 6 dígitos en la página de confirmación:</p>
+
+  <!-- Token a la izquierda, sombreado solo en el código -->
+  <p style="margin: 16px 0 32px 0; text-align: left;">
+    <span style="display: inline-block; padding: 6px 12px; background-color: #FFF7F2; border: 1px solid #FF6B00; border-radius: 6px; font-size: 18px; font-weight: 700; letter-spacing: 0.1em; color: #FF6B00;">{{ .Token }}</span>
+  </p>
+
+  <p style="margin: 0 0 32px 0; font-size: 16px; color: #1a1a1a; line-height: 1.6;">El código expira en 1 hora. Si no solicitaste este registro, puedes ignorar este correo.</p>
+
+  <!-- Footer -->
+  <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0 16px 0;" />
+  <p style="margin: 0; font-size: 13px; color: #888888;">Tu Restaurante Digital · Hecho con ❤️ en República Dominicana</p>
+</div>

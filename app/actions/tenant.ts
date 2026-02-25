@@ -43,7 +43,8 @@ export async function updateTenant(updates: TenantUpdate) {
 
   revalidatePath('/app/settings')
   revalidatePath('/app/dashboard')
-  
+  revalidatePath('/app/onboarding')
+
   return data
 }
 

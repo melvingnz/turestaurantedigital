@@ -32,6 +32,35 @@ export function validateSlug(slug: string): { valid: boolean; error?: string; no
   return { valid: true, normalized }
 }
 
+/** Requisitos: mínimo 8 caracteres, al menos una mayúscula, un número y un carácter especial */
+export function validatePassword(
+  password: string
+): { valid: boolean; error?: string } {
+  if (password.length < 8) {
+    return { valid: false, error: 'La contraseña debe tener al menos 8 caracteres' }
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, error: 'La contraseña debe incluir al menos una mayúscula' }
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, error: 'La contraseña debe incluir al menos un número' }
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return { valid: false, error: 'La contraseña debe incluir al menos un carácter especial (!@#$%^&* etc.)' }
+  }
+  return { valid: true }
+}
+
+/**
+ * Nombre a mostrar en el storefront (navbar, etc.).
+ * Quita el prefijo "TRD " del nombre del tenant para mostrar solo el nombre del cliente.
+ */
+export function getStorefrontDisplayName(tenantName: string): string {
+  if (!tenantName || typeof tenantName !== 'string') return tenantName || ''
+  const trimmed = tenantName.replace(/^TRD\s+/i, '').trim()
+  return trimmed || tenantName
+}
+
 /**
  * Generar URL de storefront usando subdominio
  * Funciona tanto en Server Components como Client Components

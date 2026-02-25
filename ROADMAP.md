@@ -95,7 +95,7 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 - Subir logo (Supabase Storage + URL externa)
 - Cambiar color de marca (color picker)
 - Preview en tiempo real del storefront
-- Estado: ✅ **IMPLEMENTADO** (falta dominio personalizado)
+- Estado: ✅ **IMPLEMENTADO**
 
 **Estado General:** 🟢 **85% COMPLETO**
 
@@ -104,8 +104,7 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 ### C. 🛒 Client Storefront `(storefront)` - El Menú
 
 **URL:** Dinámico
-- **Fase 1:** `lateburger.turestaurantedigital.com` (Subdominio)
-- **Fase 2:** `lateburger.com.do` (Dominio personalizado)
+- **URL:** Subdominio `[slug].turestaurantedigital.com` (ej. `lateburger.turestaurantedigital.com`)
 
 **Acceso:** Público (Checkout sin cuenta)
 
@@ -125,7 +124,7 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 - Checkout Sheet con formulario
 - Confirmación con confetti
 
-**Estado:** ✅ **COMPLETO** (básico, falta dominio personalizado)
+**Estado:** ✅ **COMPLETO** (básico)
 
 ---
 
@@ -151,7 +150,7 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 
 ### Infraestructura
 - **Hosting:** Vercel (recomendado)
-- **DNS:** Cloudflare (para subdominios y dominios personalizados)
+- **DNS:** Cloudflare (para subdominios)
 - **Middleware:** Next.js Middleware (routing inteligente)
 
 ---
@@ -199,28 +198,23 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 
 ### ❌ No Implementado
 
-1. **Dominio Personalizado**
-   - Configuración DNS
-   - Validación de dominio
-   - SSL automático
-
-2. **Modificadores y Variantes en Menu Builder**
+1. **Modificadores y Variantes en Menu Builder**
    - Modificadores (ej: "Bacon" +RD$ 50)
    - Variantes (ej: "Tamaño: Pequeño/Mediano/Grande")
    - Ordenamiento de productos (drag & drop)
    - Duplicar producto
 
-3. **Notificaciones WhatsApp**
+2. **Notificaciones WhatsApp**
    - Integración con API de WhatsApp Business
    - Templates de mensajes
    - Notificaciones automáticas de nuevas órdenes
 
-4. **Sistema de Pagos**
+3. **Sistema de Pagos**
    - Integración con pasarelas de pago (Stripe, PayPal)
    - Pagos en línea
    - Historial de transacciones
 
-5. **Exportación de Reportes**
+4. **Exportación de Reportes**
    - Exportar métricas a CSV
    - Reportes personalizados
 
@@ -435,8 +429,7 @@ Producto: "Doble Queso Burger"
 - [x] 404 si tenant no existe
 
 **Tareas Pendientes:**
-- [ ] Dominio personalizado (Fase 2 del roadmap)
-- [ ] Optimización de imágenes (Next.js Image)
+- [ ] Notificaciones WhatsApp
 - [ ] Búsqueda de productos
 - [ ] Filtros avanzados (precio, disponibilidad)
 - [ ] Modificadores en el storefront (si se implementan en Fase 3)
@@ -516,7 +509,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 - `turestaurantedigital.com` → `/marketing`
 - `app.turestaurantedigital.com` → `/app/dashboard`
 - `lateburger.turestaurantedigital.com` → `/storefront/lateburger`
-- `lateburger.com.do` → `/storefront/lateburger` (Fase 2: Dominio personalizado)
+- `[slug].turestaurantedigital.com` → storefront (subdominio)
 
 **Estado:** ✅ **FUNCIONANDO**
 
@@ -577,11 +570,7 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
    - Pantallas grandes
    - Filtros avanzados
 
-8. **Dominio Personalizado**
-   - Configuración DNS
-   - Validación de dominio
-
-9. **Notificaciones WhatsApp**
+8. **Notificaciones WhatsApp**
    - Integración con API
    - Templates de mensajes
 
@@ -600,7 +589,6 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 - [x] Dashboard muestra métricas básicas ✅
 
 ### Fase 4-5
-- [ ] Late Burger puede usar `lateburger.com.do` (Dominio personalizado)
 - [ ] Notificaciones WhatsApp funcionando
 - [ ] Modificadores y variantes en productos
 
@@ -666,10 +654,6 @@ useEffect(() => {
 2. **Escalabilidad de Realtime**
    - Si hay 100 restaurantes, 100 canales activos
    - Considerar rate limiting
-
-3. **Dominio Personalizado**
-   - Requiere configuración DNS manual
-   - Considerar automatización con Cloudflare API
 
 ### Riesgos de Negocio
 

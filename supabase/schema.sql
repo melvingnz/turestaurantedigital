@@ -1,6 +1,8 @@
 -- ============================================
 -- Tu Restaurante Digital - Database Schema
 -- Supabase (PostgreSQL)
+-- Ejecutar en Supabase → SQL Editor (proyecto nuevo o reset).
+-- Orden: 1) schema.sql  2) storage.sql
 -- ============================================
 
 -- Enable UUID extension
@@ -16,8 +18,11 @@ CREATE TABLE IF NOT EXISTS tenants (
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   logo_url TEXT,
+  banner_url TEXT,
   brand_color TEXT DEFAULT '#FF5F1F',
-  owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL
+  menu_description TEXT,
+  owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  welcome_email_sent_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Index for fast slug lookups (critical for subdomain routing)
@@ -57,6 +62,7 @@ CREATE TABLE IF NOT EXISTS orders (
   total_amount NUMERIC(10, 2) NOT NULL CHECK (total_amount >= 0),
   customer_name TEXT NOT NULL,
   customer_phone TEXT,
+  customer_email TEXT,
   type TEXT NOT NULL CHECK (type IN ('delivery', 'pickup', 'dine_in')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL

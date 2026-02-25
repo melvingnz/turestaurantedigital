@@ -26,9 +26,11 @@ export interface Tenant {
   name: string
   slug: string // Unique slug for subdomain routing
   logo_url: string | null
+  banner_url?: string | null // Imagen de portada del storefront
   brand_color: string // Default: '#FF5F1F'
+  menu_description?: string | null // Descripción del menú en el storefront
   owner_id: string // UUID, references auth.users
-  has_custom_domain: boolean // Onboarding: si tiene dominio propio, TRD lo gestiona
+  welcome_email_sent_at?: string | null // ISO timestamp; correo de bienvenida post-onboarding
 }
 
 /**
@@ -59,6 +61,7 @@ export interface Order {
   total_amount: number // Numeric(10, 2)
   customer_name: string
   customer_phone: string | null
+  customer_email?: string | null // Optional; for order confirmation email
   type: OrderType // 'delivery' | 'pickup' | 'dine_in'
   created_at: string // ISO timestamp
   updated_at: string // ISO timestamp
@@ -88,7 +91,6 @@ export interface TenantInsert {
   logo_url?: string | null
   brand_color?: string
   owner_id: string
-  has_custom_domain?: boolean
 }
 
 export interface ProductInsert {
@@ -107,6 +109,7 @@ export interface OrderInsert {
   total_amount: number
   customer_name: string
   customer_phone?: string | null
+  customer_email?: string | null
   type: OrderType
 }
 
@@ -126,8 +129,10 @@ export interface TenantUpdate {
   name?: string
   slug?: string
   logo_url?: string | null
+  banner_url?: string | null
   brand_color?: string
-  has_custom_domain?: boolean
+  menu_description?: string | null
+  welcome_email_sent_at?: string | null
 }
 
 export interface ProductUpdate {
@@ -144,6 +149,7 @@ export interface OrderUpdate {
   total_amount?: number
   customer_name?: string
   customer_phone?: string | null
+  customer_email?: string | null
   type?: OrderType
 }
 

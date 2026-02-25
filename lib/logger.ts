@@ -1,64 +1,128 @@
 /**
- * Server-side logger: timestamp + level (INFO | WARN | DEBUG | ERROR) + message.
- * Use LOG_LEVEL=debug|info|warn|error|silent to control verbosity (default: info in prod, debug in dev).
- * silent = no logs emitted.
+ * Logger centralizado (Pino).
+ * - DEV: logs legibles con pino-pretty.
+ * - PROD (Vercel): JSON estructurado para observabilidad.
+ * Nivel por LOG_LEVEL (debug | info | warn | error | silent). No usar console.log en el proyecto.
  */
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error'
-type ConfigLevel = LogLevel | 'silent'
+import pino from 'pino'
 
-const ORDER: Record<LogLevel, number> = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3,
-}
+const APP_NAME = 'turestaurantedigital'
+const isDev = process.env.NODE_ENV === 'development'
 
-function minLevel(): ConfigLevel {
+function getLevel(): string {
   const v = process.env.LOG_LEVEL?.toLowerCase().trim()
   if (v === 'debug' || v === 'info' || v === 'warn' || v === 'error' || v === 'silent') return v
-  return process.env.NODE_ENV === 'development' ? 'debug' : 'info'
+  return isDev ? 'debug' : 'info'
 }
 
-function timestamp(): string {
-  return new Date().toISOString()
+const base = {
+  app: APP_NAME,
+  env: process.env.NODE_ENV ?? 'development',
 }
 
-function serializePayload(data: unknown): string {
-  if (data === undefined) return ''
+function createPino(): pino.Logger {
+  const opts: pino.LoggerOptions = {
+    level: getLevel(),
+    base,
+    serializers: {
+      err: pino.stdSerializers.err,
+      error: pino.stdSerializers.err,
+    },
+  }
+
+  if (isDev) {
+    return pino({
+      ...opts,
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+          ignore: 'pid,hostname',
+        },
+      },
+    })
+  }
+
+  return pino(opts)
+}
+
+const pinoLogger = createPino()
+
+function isRecord(x: unknown): x is Record<string, unknown> {
+  return typeof x === 'object' && x !== null && !Array.isArray(x) && !(x instanceof Error)
+}
+
+function normalizePayload(data: unknown): Record<string, unknown> {
   if (data instanceof Error) {
-    const obj: Record<string, unknown> = { message: data.message, name: data.name }
-    if (data.cause !== undefined) obj.cause = data.cause
-    if (process.env.NODE_ENV === 'development' && data.stack) obj.stack = data.stack
-    return ' ' + JSON.stringify(obj)
+    return {
+      err: {
+        message: data.message,
+        name: data.name,
+        stack: data.stack,
+        cause: data.cause,
+      },
+    }
   }
-  return ' ' + JSON.stringify(data)
+  if (isRecord(data)) return data
+  if (data !== undefined && data !== null) return { data }
+  return {}
 }
 
-function emit(level: LogLevel, message: string, data?: unknown): void {
-  const min = minLevel()
-  if (min === 'silent') return
-  if (ORDER[level] < ORDER[min as LogLevel]) return
-  const ts = timestamp()
-  const tag = `|${level.toUpperCase()}|`
-  const payload = serializePayload(data)
-  const line = `${ts}  ${tag} - ${message}${payload}`
+function bindLog(level: 'debug' | 'info' | 'warn' | 'error') {
+  const fn = (a: string | Record<string, unknown>, b?: string | unknown) => {
+    let msg: string
+    let payload: Record<string, unknown> = {}
 
-  switch (level) {
-    case 'error':
-      process.stderr.write(line + '\n')
-      break
-    case 'warn':
-      process.stderr.write(line + '\n')
-      break
-    default:
-      process.stdout.write(line + '\n')
+    if (typeof a === 'string' && b === undefined) {
+      msg = a
+    } else if (typeof a === 'string' && b !== undefined) {
+      msg = a
+      payload = normalizePayload(b)
+    } else if (isRecord(a) && typeof b === 'string') {
+      payload = a
+      msg = b
+    } else {
+      msg = typeof a === 'string' ? a : String(a)
+    }
+
+    if (Object.keys(payload).length > 0) {
+      pinoLogger[level](payload, msg)
+    } else {
+      ;(pinoLogger[level] as (msg: string) => void)(msg)
+    }
   }
+  return fn
 }
 
 export const logger = {
-  debug: (message: string, data?: unknown) => emit('debug', message, data),
-  info: (message: string, data?: unknown) => emit('info', message, data),
-  warn: (message: string, data?: unknown) => emit('warn', message, data),
-  error: (message: string, data?: unknown) => emit('error', message, data),
+  debug: bindLog('debug'),
+  info: bindLog('info'),
+  warn: bindLog('warn'),
+  error: bindLog('error'),
+  child: (bindings: Record<string, unknown>) => pinoLogger.child(bindings),
+}
+
+/**
+ * Serializa errores para logs (message, name, stack, cause).
+ * Uso: logger.error('Request failed', logError(err, { route: '/api/example' }))
+ * O:   logger.error(logError(err, { requestId }), 'Request failed')
+ */
+export function logError(
+  error: unknown,
+  context?: Record<string, unknown>
+): Record<string, unknown> {
+  const err = error instanceof Error
+    ? {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        ...(error.cause !== undefined && { cause: error.cause }),
+      }
+    : { message: String(error) }
+  return {
+    ...context,
+    err,
+  }
 }

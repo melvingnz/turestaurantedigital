@@ -1,6 +1,7 @@
 import React from 'react'
 import { AppShell } from '@/components/admin/app-shell'
-import { requireAuth } from '@/lib/auth'
+import { OnboardingGuard } from '@/components/admin/onboarding-guard'
+import { requireAuth, getAuthTenant } from '@/lib/auth'
 
 export default async function AppLayout({
   children,
@@ -8,6 +9,11 @@ export default async function AppLayout({
   children: React.ReactNode
 }) {
   await requireAuth()
+  const tenant = await getAuthTenant()
 
-  return <AppShell>{children}</AppShell>
+  return (
+    <AppShell>
+      <OnboardingGuard tenant={tenant}>{children}</OnboardingGuard>
+    </AppShell>
+  )
 }

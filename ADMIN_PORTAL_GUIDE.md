@@ -1,6 +1,6 @@
 # Guía del Admin Portal — Tu Restaurante Digital
 
-**Objetivo:** Probar el Admin como dueño de restaurante y entender el onboarding completo (registro, dominio propio vs subdominio automático).
+**Objetivo:** Probar el Admin como dueño de restaurante y entender el onboarding completo (registro y subdominio automático).
 
 ---
 
@@ -8,9 +8,8 @@
 
 1. [Prerrequisitos](#1-prerrequisitos)
 2. [Guía para probar el Admin (flujo completo)](#2-guía-para-probar-el-admin-flujo-completo)
-3. [Onboarding completo: dominio propio vs subdominio](#3-onboarding-completo-dominio-propio-vs-subdominio)
-4. [Subdominio automático: cómo funciona](#4-subdominio-automático-cómo-funciona)
-5. [Migración de BD y Storage](#5-migración-de-bd-y-storage)
+3. [Subdominio automático: cómo funciona](#3-subdominio-automático-cómo-funciona)
+4. [Migración de BD y Storage](#4-migración-de-bd-y-storage)
 
 ---
 
@@ -21,7 +20,7 @@
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE_KEY` (necesaria para signup: creación del tenant y rollback; mismo proyecto que `NEXT_PUBLIC_SUPABASE_URL`)
-- **Base de datos:** Ejecutados `supabase/schema.sql`, `supabase/storage.sql` y la migración `has_custom_domain` (ver [§5.1](#51-aplicar-migración-has_custom_domain); `npm run db:update`)
+- **Base de datos:** Ejecutados `supabase/schema.sql` y `supabase/storage.sql` (ver [§4](#4-migración-de-bd-y-storage); `npm run db:update`)
 - **Resend** (solo para contacto): `RESEND_API_KEY`, `RESEND_FROM` — no necesarios para Admin
 - **Producción / emails de confirmación:** `NEXT_PUBLIC_SITE_URL=https://www.turestaurantedigital.com` en Vercel y Supabase Auth configurado según `supabase/CONFIRMATION_EMAIL_SETUP.md`
 - **Auth (login → dashboard):** Se usa `@supabase/ssr` y actualización de sesión en el proxy. Tras `git pull` o añadir la dependencia, ejecuta `npm install` para instalar `@supabase/ssr`.
@@ -49,8 +48,7 @@ Abre `http://localhost:3000`.
    - **Nombre del restaurante:** p. ej. `Mi Restaurante`
    - **URL (slug):** p. ej. `mirestaurante` (solo letras minúsculas, números y guiones)
      - Se auto-genera desde el nombre; puedes editarlo.
-     - Tu menú quedará en `mirestaurante.turestaurantedigital.com` (producción) o `mirestaurante.localhost:3000` (local).
-   - **¿Tienes dominio propio?** → **No, usar subdominio** (te configuramos `[slug].turestaurantedigital.com`) o **Sí, tengo dominio propio** (nos pondremos en contacto para configurarlo; mientras tanto usas el subdominio).
+     - Tu menú quedará en `mirestaurante.turestaurantedigital.com` (producción) o `mirestaurante.localhost:3000` (local). Todos los clientes usan subdominio bajo turestaurantedigital.com.
 
 3. **Registrarse** → se crean usuario (Supabase Auth) y tenant (BD) de forma atómica. Si el slug ya existe, verás error y deberás elegir otro.
 
@@ -62,7 +60,7 @@ Abre `http://localhost:3000`.
 
 ### Paso 2: Bienvenida (`/app/welcome`)
 
-- Tras **confirmar el correo** e **iniciar sesión**, puedes ir a `/app/welcome` para ver la URL de tu menú y enlaces al Dashboard. Mensaje según **¿Tienes dominio propio?** (No → subdominio listo; Sí → nos pondremos en contacto).
+- Tras **confirmar el correo** e **iniciar sesión**, puedes ir a `/app/welcome` para ver la URL de tu menú (subdominio) y enlaces al Dashboard.
 
 ### Paso 3: Iniciar sesión (si ya tienes cuenta)
 
@@ -90,7 +88,7 @@ Al empezar, todo en 0. Añade productos y genera órdenes desde el storefront pa
 
 - **Crear producto:** Nombre, descripción, precio, categoría, imagen (Supabase Storage o URL).
 - **Editar / eliminar** productos.
-- **Toggle disponibilidad:** Ocultar/mostrar sin borrar (p. ej. “no hay hoy”).
+- **Toggle disponibilidad:** Ocultar/mostrar sin borrar (p. ej. "no hay hoy").
 - **Filtros:** Todos, Disponibles, Ocultos.
 
 Crea al menos 2–3 productos y 1–2 categorías para probar el storefront.
@@ -135,60 +133,35 @@ Flujo: ver menú → añadir al carrito → checkout (nombre, teléfono, tipo de
 
 ---
 
-## 3. Onboarding completo: dominio propio vs subdominio
-
-Objetivo: **onboarding completo** en el que preguntamos al dueño del restaurante si tiene dominio propio y actuamos en consecuencia.
-
-### Pregunta: «¿Tienes dominio propio?»
-
-- **Sí** → El cliente tiene p. ej. `mirestaurante.com.do`. **Nosotros (TRD) lo gestionamos:** DNS, CNAME, etc. Manual por ahora; en el producto solo guardamos que tiene dominio propio y lo usamos para soporte/onboarding.
-- **No** → No tiene dominio. **Nosotros le damos subdominio automático** bajo `turestaurantedigital.com`: en cuanto termina el registro, su menú ya está en `[slug].turestaurantedigital.com`. No tiene que configurar nada.
-
-### Flujo deseado
-
-1. **Registro** (como ahora): email, contraseña, nombre del restaurante, slug.
-2. **Nuevo paso en onboarding:** «¿Tienes dominio propio para tu restaurante?»
-   - **No** → Mensaje tipo: *«Te hemos configurado [slug].turestaurantedigital.com. Tu menú ya está disponible. Puedes compartir ese enlace o tu QR.»*  
-     - El subdominio funciona en cuanto existe el tenant (ver sección 4).
-   - **Sí** → Mensaje tipo: *«Perfecto. Nos pondremos en contacto para configurar tu dominio. Mientras tanto, puedes usar [slug].turestaurantedigital.com.»*  
-     - Guardamos en el tenant que tiene dominio propio; TRD gestiona el dominio aparte.
-
-3. **Redirección** a `/app/dashboard` para seguir con Menú, Pedidos, Configuración.
-
-Con esto se cierra el “onboarding completo” y se deja claro quién gestiona el dominio en cada caso.
-
----
-
-## 4. Subdominio automático: cómo funciona
+## 3. Subdominio automático: cómo funciona
 
 - **Wildcard en DNS:** En producción se usa `*.turestaurantedigital.com` (p. ej. en Vercel). Cualquier subdominio apunta a la misma app.
 - **Proxy (`proxy.ts`):** Si la petición viene de `[slug].turestaurantedigital.com`, se reescribe a la ruta del storefront `/[slug]`. El storefront carga el tenant por `slug`.
-- **Al registrarse:** Se crea el **tenant** con ese `slug` en la BD. No se “añade” el subdominio en DNS en cada registro; ya está cubierto por el wildcard.
+- **Al registrarse:** Se crea el **tenant** con ese `slug` en la BD. No se "añade" el subdominio en DNS en cada registro; ya está cubierto por el wildcard.
 
-Por tanto, **“configurar automáticamente el subdominio”** = **crear el tenant con ese slug**. En cuanto el tenant existe, `[slug].turestaurantedigital.com` sirve el menú de ese restaurante. No hay pasos extra de DNS ni de Vercel por cada cliente.
+Por tanto, **"configurar automáticamente el subdominio"** = **crear el tenant con ese slug**. En cuanto el tenant existe, `[slug].turestaurantedigital.com` sirve el menú de ese restaurante. No hay pasos extra de DNS ni de Vercel por cada cliente. Todos los clientes usan subdominio bajo turestaurantedigital.com.
 
 **Local:** Mismo concepto con `[slug].localhost:3000` o `localhost:3000/[slug]` según tu configuración.
 
 ---
 
-## 5. Migración de BD y Storage
+## 4. Migración de BD y Storage
 
-### 5.1 Aplicar migración `has_custom_domain`
+### 4.1 Ejecutar schema y storage
 
-Tras añadir el onboarding con «¿Tienes dominio propio?», hay que agregar la columna `has_custom_domain` a la tabla `tenants`:
+En un **proyecto Supabase nuevo** (o tras cambiar de cuenta), ejecuta en el SQL Editor y en este orden:
 
-```bash
-npm run db:update
-```
+1. **supabase/schema.sql** — Tablas (`tenants`, `products`, `orders`, `order_items`), RLS y triggers.
+2. **supabase/storage.sql** — Buckets `restaurant-logos` y `product-images` y sus políticas.
 
-El script imprime instrucciones y el contenido de `supabase/TENANTS_ADD_HAS_CUSTOM_DOMAIN.sql`. Ejecuta ese SQL en **Supabase → SQL Editor** (o usa `npx supabase db execute -f supabase/TENANTS_ADD_HAS_CUSTOM_DOMAIN.sql` si tienes Supabase CLI enlazado).
+Para ver instrucciones e impresión del SQL: `npm run db:update`.
 
-### 5.2 Storage: qué es y qué hacer
+### 4.2 Storage: qué es y qué hacer
 
 - **Guía corta:** `supabase/STORAGE_COMO_FUNCIONA.md` — Qué es Storage para TRD, qué tienes que ejecutar (`storage.sql`), variables de entorno, y flujo: subir → guardar URL → mostrar.
 - **Detalle URLs:** `supabase/STORAGE_URLS.md` — Formato `https://<PROJECT_REF>.supabase.co/storage/v1/object/public/<BUCKET>/<PATH>`, buckets `restaurant-logos` y `product-images`, rutas por `owner_id`. Next.js ya tiene `remotePatterns` para `**.supabase.co`.
 
-### 5.3 Troubleshooting: 401 Invalid API key (rollback en signup)
+### 4.3 Troubleshooting: 401 Invalid API key (rollback en signup)
 
 Si al registrarte (slug duplicado o error al crear tenant) ves **"Error al eliminar usuario después de rollback: Invalid API key"** (401):
 
@@ -196,7 +169,7 @@ Si al registrarte (slug duplicado o error al crear tenant) ves **"Error al elimi
    En Supabase → **Project Settings** → **API**: hay dos keys. La que debe ir en `SUPABASE_SERVICE_ROLE_KEY` es la **`service_role`** (secret). La **`anon`** / pública no sirve para el rollback.
 
 2. **Nombre exacto de la variable**  
-   En `.env.local` debe ser **`SUPABASE_SERVICE_ROLE_KEY`** (sin “S” extra en “SERVICE”, y con `_KEY`).
+   En `.env.local` debe ser **`SUPABASE_SERVICE_ROLE_KEY`** (sin "S" extra en "SERVICE", y con `_KEY`).
 
 3. **Mismo proyecto**  
    La `service_role` y `NEXT_PUBLIC_SUPABASE_URL` tienen que ser del **mismo** proyecto de Supabase.
@@ -213,7 +186,7 @@ Si al registrarte (slug duplicado o error al crear tenant) ves **"Error al elimi
 6. **Verificar key sin tocar signup**  
    Ejecuta `npm run check:service-role`. Comprueba que la key sea `service_role`, que `ref` coincida con la URL y que no estés usando la `anon`.
 
-### 5.4 Login OK pero vuelve a /marketing/login
+### 4.4 Login OK pero vuelve a /marketing/login
 
 Si al hacer **Iniciar sesión** la contraseña se acepta pero terminas otra vez en login (sin error en pantalla):
 

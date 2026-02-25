@@ -78,7 +78,7 @@ export function DarkStorefrontClient({ tenant, products }: DarkStorefrontClientP
         open={isCartOpen}
         onOpenChange={setIsCartOpen}
         tenantId={tenant.id}
-        onOrderSuccess={() => setShowSuccess(true)}
+        slug={tenant.slug}
         primaryColor={LATE_BURGER_PRIMARY}
       />
 

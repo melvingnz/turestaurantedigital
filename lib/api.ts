@@ -74,3 +74,27 @@ export async function getProductsBySlug(slug: string): Promise<Product[]> {
   }
   return getActiveProducts(tenant.id)
 }
+
+/**
+ * Get tenants that are "profile ready" to show on the landing (Confianza por restaurantes).
+ * Criteria: has logo_url set (perfil configurado con al menos logo).
+ * Ordered by created_at desc; limited for the section.
+ */
+export async function getFeaturedTenants(): Promise<Tenant[]> {
+  const supabase = await createServerClient()
+
+  const { data, error } = await supabase
+    .from('tenants')
+    .select('id, created_at, name, slug, logo_url, brand_color, owner_id')
+    .not('logo_url', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  if (error) {
+    logger.error('[API] Error fetching featured tenants', { code: error.code, message: error.message })
+    return []
+  }
+
+  // Filter out empty logo_url strings
+  return (data as unknown as Tenant[]).filter((t) => t.logo_url && t.logo_url.trim() !== '') || []
+}

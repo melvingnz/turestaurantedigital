@@ -9,7 +9,7 @@ const features = [
     icon: Headphones,
     title: 'Soporte local de onboarding',
     description:
-      'Nuestro equipo te ayuda con la configuración del menú, dominio personalizado y buenas prácticas. Cero fricción para que empieces a vender desde el día uno.',
+      'Nuestro equipo te ayuda con la configuración del menú y buenas prácticas. Cero fricción para que empieces a vender desde el día uno.',
   },
   {
     icon: () => (

@@ -1,5 +1,7 @@
 -- ============================================
 -- Tu Restaurante Digital - Supabase Storage
+-- Ejecutar en Supabase → SQL Editor después de schema.sql.
+-- Proyecto nuevo: crea buckets y políticas de storage.
 -- ============================================
 
 -- ============================================

@@ -1,17 +1,37 @@
 import React from 'react'
 
-const LOGO_SRC = '/branding/logo-trd-v3-td-black.png'
+const LOGO_SRC = '/branding/logo.png'
 const ALT = 'Tu Restaurante Digital'
 
 interface LogoProps {
   className?: string
+  /** Navbar: texto TRD sin imagen para evitar cuadro blanco */
+  nav?: boolean
   /** Sidebar expanded: logo only, centered, h-10 */
   compact?: boolean
   /** Sidebar collapsed: logo only, centered, h-8 */
   logoOnly?: boolean
 }
 
-export function Logo({ className, compact, logoOnly }: LogoProps) {
+/** Logo tipo TRD para navbar: sin imagen, sin fondo */
+function NavLogo({ className }: { className?: string }) {
+  return (
+    <span
+      className={`inline-flex items-baseline font-bold text-xl sm:text-2xl tracking-tight text-[#1A1A1A] select-none ${className || ''}`}
+      aria-label={ALT}
+    >
+      <span>T</span>
+      <span className="text-[#FF6B00]">R</span>
+      <span>D</span>
+    </span>
+  )
+}
+
+export function Logo({ className, compact, logoOnly, nav }: LogoProps) {
+  if (nav) {
+    return <NavLogo className={className} />
+  }
+
   if (logoOnly) {
     return (
       <div
@@ -52,9 +72,9 @@ export function Logo({ className, compact, logoOnly }: LogoProps) {
       <img
         src={LOGO_SRC}
         alt={ALT}
-        width={40}
-        height={40}
-        className="h-10 w-10 object-contain flex-shrink-0 p-0 m-0 border-0 bg-transparent"
+        width={112}
+        height={112}
+        className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 object-contain flex-shrink-0 p-0 m-0 border-0 bg-transparent block"
       />
     </div>
   )

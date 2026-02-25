@@ -99,13 +99,20 @@ export function ProductForm({
       return
     }
 
+    const categoryTrimmed = formData.category?.trim()
+    if (!categoryTrimmed) {
+      setError('Indica la categoría del producto')
+      setLoading(false)
+      return
+    }
+
     try {
       const productData: ProductInsert | ProductUpdate = {
         tenant_id: tenantId,
         name: formData.name.trim(),
         description: formData.description.trim() || null,
         price: parseFloat(formData.price),
-        category: formData.category,
+        category: categoryTrimmed,
         image_url: formData.image_url.trim() || null,
         is_available: formData.is_available,
       }
@@ -218,15 +225,20 @@ export function ProductForm({
               </p>
             </div>
 
-            {/* Categoría */}
+            {/* Categoría: predefinidas + crear nueva */}
             <div className="grid gap-2">
               <Label htmlFor="category">Categoría</Label>
               <select
                 id="category"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
+                value={categories.includes(formData.category) ? formData.category : '__other__'}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (v === '__other__') {
+                    setFormData({ ...formData, category: '' })
+                  } else {
+                    setFormData({ ...formData, category: v })
+                  }
+                }}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={loading}
               >
@@ -235,7 +247,19 @@ export function ProductForm({
                     {cat}
                   </option>
                 ))}
+                <option value="__other__">＋ Crear nueva categoría</option>
               </select>
+              {(!formData.category || !categories.includes(formData.category)) && (
+                <Input
+                  placeholder="Escribe el nombre de la categoría"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="mt-1"
+                  disabled={loading}
+                />
+              )}
             </div>
 
             {/* Imagen del Producto */}
@@ -264,6 +288,9 @@ export function ProductForm({
               bucket="product-images"
               disabled={loading}
             />
+            <p className="text-xs text-gray-500 -mt-1">
+              <strong>Tamaño aceptado:</strong> 800×800 px (cuadrado). Solo PNG, JPG o WEBP. Máximo 5 MB.
+            </p>
 
             {/* Disponibilidad */}
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">

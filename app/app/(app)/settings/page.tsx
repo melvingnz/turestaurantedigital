@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { getCurrentTenant, updateTenant, checkSlugAvailability } from '@/app/actions/tenant'
 import { validateSlug } from '@/lib/utils'
-import { uploadLogo, deleteOldLogo } from '@/app/actions/storage'
+import { uploadLogo, deleteOldLogo, uploadBanner, deleteOldBanner } from '@/app/actions/storage'
 import { ImageUpload } from '@/components/ui/image-upload'
-import { Loader2, Save, Palette, Building2, Globe, Info } from 'lucide-react'
+import { Loader2, Save, Palette, Building2, Globe } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function SettingsPage() {
@@ -25,7 +26,9 @@ export default function SettingsPage() {
     name: '',
     slug: '',
     logo_url: '',
+    banner_url: '',
     brand_color: '#FF5F1F',
+    menu_description: '',
   })
 
   useEffect(() => {
@@ -37,15 +40,18 @@ export default function SettingsPage() {
             name: string
             slug: string
             logo_url: string | null
+            banner_url?: string | null
             brand_color: string
-            has_custom_domain?: boolean
+            menu_description?: string | null
           }
           setTenant(validTenant)
           setFormData({
             name: validTenant.name || '',
             slug: validTenant.slug || '',
             logo_url: validTenant.logo_url || '',
+            banner_url: validTenant.banner_url || '',
             brand_color: validTenant.brand_color || '#FF5F1F',
+            menu_description: validTenant.menu_description || '',
           })
         }
       } catch (err) {
@@ -93,7 +99,9 @@ export default function SettingsPage() {
         name: formData.name,
         slug: slugValidation.normalized || formData.slug,
         logo_url: formData.logo_url || null,
+        banner_url: formData.banner_url || null,
         brand_color: formData.brand_color,
+        menu_description: formData.menu_description?.trim() || null,
       })
 
       setTenant(updated)
@@ -131,23 +139,6 @@ export default function SettingsPage() {
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
           {error}
-        </div>
-      )}
-
-      {tenant?.has_custom_domain && (
-        <div className="flex gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800">
-          <Info className="h-5 w-5 shrink-0 mt-0.5 text-amber-600" />
-          <div>
-            <p className="font-medium">Dominio propio configurado</p>
-            <p className="text-sm mt-1 text-amber-700">
-              Nos pondremos en contacto contigo para configurar tu dominio. Mientras tanto, tu menú
-              está disponible en{' '}
-              <span className="font-mono font-semibold">
-                {tenant?.slug || 'tu-slug'}.turestaurantedigital.com
-              </span>
-              .
-            </p>
-          </div>
         </div>
       )}
 
@@ -206,7 +197,7 @@ export default function SettingsPage() {
             <h2 className="text-xl font-semibold text-gray-900">Branding</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <ImageUpload
               currentUrl={formData.logo_url}
               onUpload={async (file) => {
@@ -230,7 +221,52 @@ export default function SettingsPage() {
               }}
               bucket="restaurant-logos"
               disabled={saving}
+              label="Logo del Restaurante"
+              hintText="500×500 px (cuadrado). PNG, JPG o WEBP. Máximo 5 MB."
             />
+
+            <ImageUpload
+              currentUrl={formData.banner_url}
+              onUpload={async (file) => {
+                if (formData.banner_url) {
+                  await deleteOldBanner(formData.banner_url)
+                }
+                const result = await uploadBanner(file)
+                if (result.url) {
+                  setFormData({ ...formData, banner_url: result.url })
+                }
+                return result
+              }}
+              onUrlChange={(url) => {
+                setFormData({ ...formData, banner_url: url })
+              }}
+              onRemove={async () => {
+                if (formData.banner_url) {
+                  await deleteOldBanner(formData.banner_url)
+                }
+                setFormData({ ...formData, banner_url: '' })
+              }}
+              bucket="restaurant-logos"
+              disabled={saving}
+              label="Banner"
+              hintText="1200×600 px. PNG, JPG o WEBP. Máximo 5 MB."
+            />
+
+            <div className="space-y-2">
+              <Label htmlFor="menu_description">Descripción del menú</Label>
+              <textarea
+                id="menu_description"
+                rows={4}
+                placeholder="Texto que aparecerá debajo del banner en tu menú (ej: especialidades, horarios, dirección…)"
+                value={formData.menu_description}
+                onChange={(e) => setFormData({ ...formData, menu_description: e.target.value })}
+                disabled={saving}
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y min-h-[80px]"
+              />
+              <p className="text-xs text-gray-500">
+                Opcional. Se muestra debajo del banner y encima de los productos.
+              </p>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="brand_color">Color de Marca</Label>
@@ -299,13 +335,15 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                type="button"
-                className="px-4 py-2 rounded-md text-white font-medium text-sm"
+              <Link
+                href={formData.slug ? `/${formData.slug}` : '#'}
+                className="px-4 py-2 rounded-md text-white font-medium text-sm inline-block text-center"
                 style={{ backgroundColor: formData.brand_color }}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Ver Menú
-              </button>
+              </Link>
               <button
                 type="button"
                 className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50"

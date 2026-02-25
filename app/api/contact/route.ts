@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { logger } from '@/lib/logger'
+import { getRequestIdFromHeaders } from '@/lib/request-context'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const RESEND_FROM =
@@ -18,9 +19,12 @@ function escapeHtml(s: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = getRequestIdFromHeaders(request.headers)
+  const ctx = { requestId, route: '/api/contact' }
+
   try {
     if (!RESEND_API_KEY) {
-      logger.error('[Contact] RESEND_API_KEY is not set')
+      logger.error({ ...ctx }, '[Contact] RESEND_API_KEY is not set')
       return NextResponse.json(
         { message: 'El servicio de correo no está configurado.' },
         { status: 503 }
@@ -63,17 +67,17 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      logger.error('[Contact] Resend error', error)
+      logger.error('[Contact] Resend error', { ...ctx, error })
       return NextResponse.json(
         { message: 'No pudimos enviar tu mensaje. Intenta de nuevo.' },
         { status: 502 }
       )
     }
 
-    logger.info('[Contact] Sent', { id: data?.id, to: CONTACT_TO })
+    logger.info({ ...ctx, id: data?.id, to: CONTACT_TO }, '[Contact] Sent')
     return NextResponse.json({ ok: true })
   } catch (e) {
-    logger.error('[Contact] Unexpected error', e)
+    logger.error('[Contact] Unexpected error', { ...ctx, err: e })
     return NextResponse.json(
       { message: 'Error al procesar el mensaje.' },
       { status: 500 }

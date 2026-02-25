@@ -25,7 +25,6 @@ export default async function WelcomePage() {
   }
 
   const validTenant = tenant as unknown as Tenant
-  const hasCustomDomain = !!validTenant.has_custom_domain
   const slug = validTenant.slug
   const storefrontUrl = getStorefrontUrl(slug)
 
@@ -41,17 +40,8 @@ export default async function WelcomePage() {
               ¡Bienvenido, {validTenant.name}!
             </h1>
             <p className="text-[#1A1A1A]/70 text-sm sm:text-base leading-relaxed">
-              {hasCustomDomain ? (
-                <>
-                  Tienes dominio propio. Nos pondremos en contacto contigo para configurarlo.
-                  Mientras tanto, tu menú ya está disponible en:
-                </>
-              ) : (
-                <>
-                  Te hemos configurado tu subdominio automáticamente. Tu menú ya está disponible
-                  y puedes compartirlo con tus clientes.
-                </>
-              )}
+              Te hemos configurado tu subdominio automáticamente. Tu menú ya está disponible
+              y puedes compartirlo con tus clientes.
             </p>
           </div>
 

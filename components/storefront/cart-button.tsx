@@ -17,6 +17,8 @@ export function CartButton({ onClick, primaryColor = '#FF5F1F', textColor = '#FF
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(price)
   }
 

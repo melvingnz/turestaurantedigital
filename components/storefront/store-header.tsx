@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { ShoppingBag, Menu, X, UtensilsCrossed, Coffee } from 'lucide-react'
 import Image from 'next/image'
 import { useCart } from './cart-context'
+import { getStorefrontDisplayName } from '@/lib/utils'
 import type { Tenant } from '@/types/database'
 
 const LATE_BURGER_PRIMARY = '#0FA8D8'
@@ -24,6 +25,7 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
   const { totalItems, setIsOpen } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
   const primaryColor = tenant.brand_color || '#FF5F1F'
+  const displayName = getStorefrontDisplayName(tenant.name)
 
   useEffect(() => {
     if (!isLateBurger || !menuOpen) return
@@ -89,11 +91,11 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
                     className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0"
                     style={{ backgroundColor: LATE_BURGER_SECONDARY, color: LATE_BURGER_PRIMARY }}
                   >
-                    {tenant.name.charAt(0)}
+                    {displayName.charAt(0) || tenant.name.charAt(0)}
                   </div>
                 )}
                 <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white drop-shadow-md truncate hidden sm:block">
-                  {tenant.name}
+                  {displayName}
                 </h1>
               </div>
 
@@ -180,10 +182,10 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
                 </div>
               ) : (
                 <div className="h-12 w-12 md:h-14 md:w-14 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl" style={{ backgroundColor: primaryColor }}>
-                  {tenant.name.charAt(0)}
+                  {displayName.charAt(0) || tenant.name.charAt(0)}
                 </div>
               )}
-              <h1 className="text-xl md:text-2xl font-bold text-white" style={{ color: primaryColor }}>{tenant.name}</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-white" style={{ color: primaryColor }}>{displayName}</h1>
             </div>
             <button onClick={() => setIsOpen(true)} className="relative p-2 md:p-3 rounded-full transition-colors hover:bg-[#0F0F0F]" aria-label="Ver carrito">
               <ShoppingBag className="h-6 w-6 md:h-7 md:w-7" style={{ color: primaryColor }} />
@@ -199,26 +201,29 @@ export function StoreHeader({ tenant, isDark = false, isLateBurger = false }: St
     )
   }
 
+  // Storefront global: solo logo del restaurante en navbar (sin texto); si no hay logo, inicial + nombre
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" style={{ borderBottomColor: `${primaryColor}20` }}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between h-14 md:h-16 min-h-[3.5rem] md:min-h-[4rem]">
+          <div className="flex items-center gap-2 min-w-0">
             {tenant.logo_url ? (
-              <div className="relative h-10 w-10 md:h-12 md:w-12 rounded-lg overflow-hidden">
-                <Image src={tenant.logo_url} alt={tenant.name} fill className="object-contain" sizes="48px" />
+              <div className="relative h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-lg overflow-hidden flex-shrink-0">
+                <Image src={tenant.logo_url} alt={tenant.name} fill className="object-contain" sizes="64px" />
               </div>
             ) : (
-              <div className="h-10 w-10 md:h-12 md:w-12 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl" style={{ backgroundColor: primaryColor }}>
-                {tenant.name.charAt(0)}
-              </div>
+              <>
+                <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0" style={{ backgroundColor: primaryColor }}>
+                  {displayName.charAt(0) || tenant.name.charAt(0)}
+                </div>
+                <h1 className="text-base md:text-lg font-bold truncate" style={{ color: primaryColor }}>{displayName}</h1>
+              </>
             )}
-            <h1 className="text-xl md:text-2xl font-bold" style={{ color: primaryColor }}>{tenant.name}</h1>
           </div>
-          <button onClick={() => setIsOpen(true)} className="relative p-2 md:p-3 rounded-full transition-colors hover:bg-gray-100" aria-label="Ver carrito">
-            <ShoppingBag className="h-6 w-6 md:h-7 md:w-7" style={{ color: primaryColor }} />
+          <button onClick={() => setIsOpen(true)} className="relative p-1.5 md:p-2 rounded-full transition-colors hover:bg-gray-100" aria-label="Ver carrito">
+            <ShoppingBag className="h-5 w-5 md:h-6 md:w-6" style={{ color: primaryColor }} />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 text-white text-xs md:text-sm font-bold rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: primaryColor }}>
+              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 md:h-5 md:w-5 text-white text-[10px] md:text-xs font-bold rounded-full flex items-center justify-center shadow" style={{ backgroundColor: primaryColor }}>
                 {totalItems > 99 ? '99+' : totalItems}
               </span>
             )}

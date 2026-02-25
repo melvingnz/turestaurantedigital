@@ -13,18 +13,18 @@ const plans = [
       'Menú Digital',
       'Vistas ilimitadas',
       'Código QR',
-      'Actualización de precios',
     ],
     cta: 'Comenzar Gratis',
     popular: false,
   },
   {
     name: 'Pro',
-    price: 'RD$ 2,500',
+    price: 'US$ 60',
     period: '/mes',
     description: 'Para restaurantes que quieren crecer',
     features: [
       'Todo en Inicios',
+      'Actualización de precios',
       'Pedidos Ilimitados',
       'KDS (Pantalla de Cocina)',
       'Integración WhatsApp',
@@ -41,10 +41,10 @@ export function Pricing() {
     <section id="pricing" className="w-full bg-white py-12 sm:py-16 md:py-20 lg:py-24">
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
             Planes <span className="text-[#FF6B00]">simples y transparentes</span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-[#1A1A1A]/70 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-[#1A1A1A]/70 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Sin comisiones ocultas. Sin sorpresas. Solo precios claros.
           </p>
         </div>
@@ -68,30 +68,30 @@ export function Pricing() {
               )}
 
               <div className="text-center mb-5 sm:mb-6 md:mb-8">
-                <h3 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
-                <p className="text-sm sm:text-base text-[#1A1A1A]/70 mb-3 sm:mb-4 leading-snug break-words">{plan.description}</p>
+                <h3 className="text-lg sm:text-xl font-bold text-[#1A1A1A] mb-1.5 sm:mb-2 leading-tight">{plan.name}</h3>
+                <p className="text-xs sm:text-sm text-[#1A1A1A]/70 mb-3 sm:mb-4 leading-snug break-words">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A]">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1A1A1A]">
                     {plan.price}
                   </span>
                   {plan.period && (
-                    <span className="text-gray-500 text-base sm:text-lg">{plan.period}</span>
+                    <span className="text-gray-500 text-sm sm:text-base">{plan.period}</span>
                   )}
                 </div>
               </div>
 
-              <ul className="space-y-2.5 sm:space-y-3 md:space-y-4 mb-5 sm:mb-6 md:mb-8">
+              <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 mb-5 sm:mb-6 md:mb-8">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
-                    <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[#FF6B00] flex-shrink-0 mt-0.5" />
-                    <span className="text-sm sm:text-base text-[#1A1A1A]/70 leading-snug break-words">{feature}</span>
+                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#FF6B00] flex-shrink-0 mt-0.5" />
+                    <span className="text-xs sm:text-sm text-[#1A1A1A]/70 leading-snug break-words">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <Link href="/marketing/signup">
                 <Button
-                  className={`w-full text-sm sm:text-base h-10 sm:h-11 md:h-12 ${
+                  className={`w-full text-xs sm:text-sm h-9 sm:h-10 md:h-11 ${
                     plan.popular
                       ? 'bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white'
                       : 'bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white'

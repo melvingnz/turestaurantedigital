@@ -92,7 +92,7 @@ export function LateBurgerStorefront({ tenant, products }: LateBurgerStorefrontP
         open={isCartOpen}
         onOpenChange={setIsCartOpen}
         tenantId={tenant.id}
-        onOrderSuccess={() => setShowSuccess(true)}
+        slug={tenant.slug}
         primaryColor={LATE_BURGER_PRIMARY}
       />
 

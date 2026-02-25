@@ -11,7 +11,7 @@ export function Hero() {
   const lateBurgerUrl = getStorefrontUrl('lateburger')
 
   return (
-    <section className="w-full bg-white py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32 overflow-hidden">
+    <section className="w-full bg-white pt-4 sm:pt-6 md:pt-8 lg:pt-10 pb-8 sm:pb-12 md:pb-16 lg:pb-24 xl:pb-32 overflow-hidden">
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:grid lg:grid-cols-[6fr_4fr] gap-4 sm:gap-6 lg:gap-8 items-center">
           {/* Text: first on mobile, centered; ≤60% width on desktop */}

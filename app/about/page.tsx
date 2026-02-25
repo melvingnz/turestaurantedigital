@@ -22,7 +22,6 @@ export const metadata = {
 }
 
 const roadmapPeek = [
-  'Dominio personalizado por restaurante',
   'Notificaciones WhatsApp avanzadas',
   'Pagos en línea integrados',
   'Exportación de reportes (CSV)',

@@ -141,9 +141,10 @@ El formulario de contacto envía a `contacto@turestaurantedigital.com`. Para pro
    - Ve a tu proyecto de Supabase
    - Abre el SQL Editor
    - Ejecuta los scripts en este orden:
-     1. `supabase/schema.sql` - Schema principal
-     2. `supabase/storage.sql` - Configuración de Storage
-     3. Migración onboarding: `npm run db:update` → imprime el SQL; ejecútalo en Supabase → SQL Editor (o usa `supabase/TENANTS_ADD_HAS_CUSTOM_DOMAIN.sql`)
+     1. `supabase/schema.sql` - Schema principal (tablas, RLS, triggers)
+     2. `supabase/storage.sql` - Configuración de Storage (buckets y políticas)
+   
+   Para ver instrucciones e impresión del SQL: `npm run db:update`
    
    Ver `supabase/README.md` para instrucciones detalladas.
 
@@ -303,7 +304,6 @@ Cada restaurante puede personalizar su storefront con logo, colores y branding. 
 
 ### 📋 Pendiente
 
-- [ ] Dominio personalizado por restaurante
 - [ ] Notificaciones WhatsApp
 - [ ] Sistema de pagos en línea
 - [ ] Exportación de reportes (CSV)
@@ -320,12 +320,7 @@ Ver `ROADMAP.md` para el roadmap completo y detallado del proyecto.
    - Gestión centralizada de assets
    - Optimización automática
 
-2. **FASE 7**: Dominio Personalizado
-   - Configuración DNS automática
-   - Validación de dominio
-   - SSL automático
-
-3. **FASE 8**: Notificaciones WhatsApp
+2. **FASE 7**: Notificaciones y pagos
    - Integración con API de WhatsApp Business
    - Templates de mensajes
    - Notificaciones automáticas
@@ -342,6 +337,14 @@ Ver `ROADMAP.md` para el roadmap completo y detallado del proyecto.
 ### Error `spawn EPERM` en Windows al hacer `npm run dev`
 
 En Windows, Node 21+ puede provocar este error con Next.js. **Solución:** instala [Node 20 LTS](https://nodejs.org/) y úsalo (sin Volta ni nvm).
+
+### No arranca en macOS (`command not found: next` o error al hacer `npm run dev`)
+
+Los scripts `dev.js` y `build.js` usan la ruta completa a `node_modules/.bin/next` para que funcione en Mac y Linux sin depender del PATH. Si aun así falla:
+
+1. **Reinstala dependencias:** `rm -rf node_modules package-lock.json && npm install`
+2. **Usa Node 20 LTS:** el proyecto está probado con Node 20. Comprueba con `node -v`.
+3. **Arranque directo (alternativa):** `npx next dev -H localhost -p 3000`
 
 ### Error DNS_PROBE_FINISHED_NXDOMAIN (Subdominio no resuelve)
 

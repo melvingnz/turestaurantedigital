@@ -44,7 +44,7 @@ export default async function StorefrontLayout({
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <main>{children}</main>
       </div>
     </CartProvider>

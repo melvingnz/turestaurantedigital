@@ -5,6 +5,7 @@ import { createAdminClient, deleteUserForRollback, hasServiceRoleKey } from '@/l
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { logger } from '@/lib/logger'
+import { validatePassword } from '@/lib/utils'
 
 /** Base URL para redirects de confirmación de email. Producción: siempre dominio público, nunca localhost. */
 const PRODUCTION_SITE_URL = 'https://www.turestaurantedigital.com'
@@ -24,7 +25,6 @@ export interface SignupData {
   password: string
   restaurantName: string
   slug: string
-  hasCustomDomain: boolean
 }
 
 export interface SignupResult {
@@ -48,6 +48,11 @@ export interface SignupResult {
  */
 export async function signupWithTenant(data: SignupData): Promise<SignupResult> {
   const supabase = await createClient()
+
+  const pwd = validatePassword(data.password)
+  if (!pwd.valid) {
+    return { success: false, error: pwd.error }
+  }
 
   // Validar formato del slug
   const slugRegex = /^[a-z0-9-]+$/
@@ -86,6 +91,12 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
     })
 
     if (authError) {
+      logger.error('[Auth] signUp failed', {
+        message: authError.message,
+        status: (authError as { status?: number }).status,
+        code: (authError as { code?: string }).code,
+        email: data.email,
+      })
       return {
         success: false,
         error: authError.message || 'Error al crear el usuario',
@@ -134,7 +145,6 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
         slug: data.slug.toLowerCase(),
         owner_id: authData.user.id,
         brand_color: '#FF5F1F',
-        has_custom_domain: !!data.hasCustomDomain,
       })
       .select()
       .single()

@@ -4,6 +4,7 @@ import { ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import type { Tenant } from '@/types/database'
 import { useCart } from './cart-context'
+import { getStorefrontDisplayName } from '@/lib/utils'
 
 interface NavbarProps {
   tenant: Tenant
@@ -11,6 +12,7 @@ interface NavbarProps {
 
 export function Navbar({ tenant }: NavbarProps) {
   const { totalItems, setIsOpen } = useCart()
+  const displayName = getStorefrontDisplayName(tenant.name)
 
   return (
     <nav className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
@@ -28,7 +30,7 @@ export function Navbar({ tenant }: NavbarProps) {
                 />
               </div>
             ) : null}
-            <h1 className="text-xl font-bold text-gray-900">{tenant.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{displayName}</h1>
           </div>
           
           {totalItems > 0 && (

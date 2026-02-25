@@ -27,14 +27,15 @@ function MobileMenuPanel({
       role="dialog"
       aria-modal="true"
       aria-label="Menú"
-      className="fixed inset-0 z-[20000] md:hidden"
+      className="fixed inset-0 z-[20000] md:hidden isolate"
     >
       <div
-        className="absolute inset-0 bg-black/50 animate-in fade-in duration-200"
+        className="absolute inset-0 bg-black/60 animate-in fade-in duration-200"
         onClick={onClose}
+        aria-hidden
       />
-      <div className="absolute top-0 right-0 h-full w-full max-w-xs sm:max-w-sm bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-        <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 pt-4 sm:pt-6 pb-2 border-b">
+      <div className="absolute top-0 right-0 h-full w-full max-w-xs sm:max-w-sm bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden">
+        <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 pt-4 sm:pt-6 pb-2 border-b bg-white">
           <h2 className="text-lg font-semibold text-foreground">Menú</h2>
           <button
             type="button"
@@ -45,7 +46,7 @@ function MobileMenuPanel({
             <X className="h-5 w-5" />
           </button>
         </div>
-        <nav className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 px-4 sm:px-6 py-4 space-y-1 bg-white">
           <Link
             href="/#features"
             className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-[#FF6B00] min-h-[44px] flex items-center touch-manipulation"
@@ -114,7 +115,7 @@ export function Navbar() {
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 sm:h-16 items-center justify-between">
             <Link href="/" className="flex items-center min-w-0 p-0 bg-transparent border-0 shrink-0" onClick={closeMenu}>
-              <Logo />
+              <Logo nav />
             </Link>
 
             <div className="hidden md:flex items-center gap-8">

@@ -7,20 +7,21 @@ import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { Logo } from '@/components/ui/logo'
 import { signupWithTenant } from '@/app/actions/auth'
+import { validatePassword } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Check, X } from 'lucide-react'
 
 export default function SignupPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     restaurantName: '',
     slug: '',
-    hasCustomDomain: false,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,19 +36,19 @@ export default function SignupPage() {
       return
     }
 
-    if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
-      setLoading(false)
-      return
-    }
+const pwd = validatePassword(formData.password)
+      if (!pwd.valid) {
+        setError(pwd.error ?? 'Contraseña no válida')
+        setLoading(false)
+        return
+      }
 
     const result = await signupWithTenant({
       ...formData,
-      hasCustomDomain: formData.hasCustomDomain,
     })
 
     if (result.success) {
-      router.push('/marketing/confirmemail')
+      router.push(`/marketing/confirmemail?email=${encodeURIComponent(formData.email)}`)
     } else {
       setError(result.error || 'Error al crear la cuenta')
       setLoading(false)
@@ -122,16 +123,68 @@ export default function SignupPage() {
             {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-                minLength={6}
-                disabled={loading}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Mayúscula, número y carácter especial"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  minLength={8}
+                  disabled={loading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1A1A1A]/50 hover:text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B00] rounded p-1"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              {formData.password.length > 0 && (
+                <ul className="text-xs space-y-1.5 text-[#1A1A1A]/70">
+                  <li className={formData.password.length >= 8 ? 'text-green-600' : ''}>
+                    {formData.password.length >= 8 ? (
+                      <Check className="h-3.5 w-3.5 inline mr-1.5 align-middle" />
+                    ) : (
+                      <X className="h-3.5 w-3.5 inline mr-1.5 align-middle text-[#1A1A1A]/40" />
+                    )}
+                    Al menos 8 caracteres
+                  </li>
+                  <li className={/[A-Z]/.test(formData.password) ? 'text-green-600' : ''}>
+                    {/[A-Z]/.test(formData.password) ? (
+                      <Check className="h-3.5 w-3.5 inline mr-1.5 align-middle" />
+                    ) : (
+                      <X className="h-3.5 w-3.5 inline mr-1.5 align-middle text-[#1A1A1A]/40" />
+                    )}
+                    Una mayúscula
+                  </li>
+                  <li className={/[0-9]/.test(formData.password) ? 'text-green-600' : ''}>
+                    {/[0-9]/.test(formData.password) ? (
+                      <Check className="h-3.5 w-3.5 inline mr-1.5 align-middle" />
+                    ) : (
+                      <X className="h-3.5 w-3.5 inline mr-1.5 align-middle text-[#1A1A1A]/40" />
+                    )}
+                    Un número
+                  </li>
+                  <li className={/[^A-Za-z0-9]/.test(formData.password) ? 'text-green-600' : ''}>
+                    {/[^A-Za-z0-9]/.test(formData.password) ? (
+                      <Check className="h-3.5 w-3.5 inline mr-1.5 align-middle" />
+                    ) : (
+                      <X className="h-3.5 w-3.5 inline mr-1.5 align-middle text-[#1A1A1A]/40" />
+                    )}
+                    Un carácter especial (!@#$%&*…)
+                  </li>
+                </ul>
+              )}
             </div>
 
             {/* Restaurant Name */}
@@ -180,40 +233,6 @@ export default function SignupPage() {
               </div>
               <p className="text-xs text-[#1A1A1A]/50">
                 Tu menú estará disponible en: {formData.slug || 'turestaurante'}.turestaurantedigital.com
-              </p>
-            </div>
-
-            {/* ¿Tienes dominio propio? */}
-            <div className="space-y-3">
-              <Label>¿Tienes dominio propio para tu restaurante?</Label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="hasCustomDomain"
-                    checked={!formData.hasCustomDomain}
-                    onChange={() => setFormData({ ...formData, hasCustomDomain: false })}
-                    disabled={loading}
-                    className="text-[#FF6B00] focus:ring-[#FF6B00]"
-                  />
-                  <span className="text-sm text-[#1A1A1A]">No, usar subdominio</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="hasCustomDomain"
-                    checked={formData.hasCustomDomain}
-                    onChange={() => setFormData({ ...formData, hasCustomDomain: true })}
-                    disabled={loading}
-                    className="text-[#FF6B00] focus:ring-[#FF6B00]"
-                  />
-                  <span className="text-sm text-[#1A1A1A]">Sí, tengo dominio propio</span>
-                </label>
-              </div>
-              <p className="text-xs text-[#1A1A1A]/50">
-                {formData.hasCustomDomain
-                  ? 'Nos pondremos en contacto para configurarlo. Mientras tanto usarás el subdominio.'
-                  : `Te configuramos ${formData.slug || 'turestaurante'}.turestaurantedigital.com automáticamente.`}
               </p>
             </div>
 

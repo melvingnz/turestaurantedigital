@@ -3,6 +3,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import type { Order, OrderInsert, OrderItemInsert, OrderWithItems } from '@/types/database'
 import { logger } from '@/lib/logger'
+import { sendOrderConfirmationEmail, sendNewOrderNotificationToRestaurant } from '@/app/actions/send-order-emails'
 
 /**
  * Create a new order with items
@@ -50,6 +51,14 @@ export async function placeOrder(
     await supabase.from('orders').delete().eq('id', validOrder.id)
     throw new Error(`Failed to create order items: ${itemsError.message}`)
   }
+
+  // Send emails in background (do not block or fail the order)
+  sendOrderConfirmationEmail(validOrder.id).catch((e) =>
+    logger.error('[Orders] Confirmation email failed', { orderId: validOrder.id, message: (e as Error).message })
+  )
+  sendNewOrderNotificationToRestaurant(validOrder.id).catch((e) =>
+    logger.error('[Orders] Restaurant notification email failed', { orderId: validOrder.id, message: (e as Error).message })
+  )
 
   return validOrder
 }
@@ -181,4 +190,79 @@ export async function getOrders(tenantId: string): Promise<Order[]> {
   }
 
   return ((data as unknown as Order[]) || []) as Order[]
+}
+
+/**
+ * Get a single order with items and product details, plus tenant name/slug (for emails).
+ */
+export async function getOrderWithItemsForEmail(orderId: string): Promise<{
+  order: OrderWithItems
+  tenant: { name: string; slug: string }
+} | null> {
+  const supabase = await createServerClient()
+
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('*')
+    // @ts-ignore
+    .eq('id', orderId)
+    .single()
+
+  if (orderError || !order) {
+    logger.error('[Orders] getOrderWithItemsForEmail', { orderId, message: orderError?.message })
+    return null
+  }
+
+  const { data: tenant, error: tenantError } = await supabase
+    .from('tenants')
+    .select('name, slug')
+    // @ts-ignore
+    .eq('id', (order as { tenant_id: string }).tenant_id)
+    .single()
+
+  if (tenantError || !tenant) {
+    logger.error('[Orders] Tenant not found for email', { orderId })
+    return null
+  }
+
+  const { data: orderItems, error: itemsError } = await supabase
+    .from('order_items')
+    .select('*, products(name, price)')
+    // @ts-ignore
+    .eq('order_id', orderId)
+
+  if (itemsError) {
+    logger.error('[Orders] Order items not found for email', { orderId })
+    return null
+  }
+
+  const items = ((orderItems as unknown as Array<{
+    id: string
+    order_id: string
+    product_id: string
+    quantity: number
+    price: number
+    notes: string | null
+    created_at: string
+    products: { name: string; price: number } | null
+  }>) || []).map((item) => ({
+    id: item.id,
+    order_id: item.order_id,
+    product_id: item.product_id,
+    quantity: item.quantity,
+    price: item.price,
+    notes: item.notes,
+    created_at: item.created_at,
+    product: { id: item.product_id, name: (item.products?.name ?? 'Producto'), price: item.price, description: null, image_url: null, is_available: true, category: '', created_at: '', updated_at: '', tenant_id: '' },
+  }))
+
+  const orderWithItems: OrderWithItems = {
+    ...(order as unknown as Order),
+    items,
+  }
+
+  return {
+    order: orderWithItems,
+    tenant: { name: (tenant as { name: string }).name, slug: (tenant as { slug: string }).slug },
+  }
 }

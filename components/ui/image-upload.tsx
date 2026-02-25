@@ -13,8 +13,14 @@ interface ImageUploadProps {
   onUrlChange?: (url: string) => void
   onRemove?: () => void
   bucket: 'restaurant-logos' | 'product-images'
+  /** Si es false, no se muestra la opción "O ingresa una URL externa" (solo subida de archivo). */
+  allowExternalUrl?: boolean
   disabled?: boolean
   className?: string
+  /** Etiqueta del campo (ej. "Logo del Restaurante", "Banner"). Por defecto según bucket. */
+  label?: string
+  /** Texto de ayuda con formato y tamaño (ej. "500×500 px. PNG, JPG o WEBP. Máximo 5 MB."). */
+  hintText?: string
 }
 
 export function ImageUpload({
@@ -23,8 +29,11 @@ export function ImageUpload({
   onUrlChange,
   onRemove,
   bucket,
+  allowExternalUrl = true,
   disabled,
   className,
+  label,
+  hintText,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,17 +59,51 @@ export function ImageUpload({
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('El archivo debe ser una imagen')
+    const isProductImage = bucket === 'product-images'
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp']
+
+    if (!allowedTypes.includes(file.type)) {
+      setError('Solo se permiten PNG, JPG o WEBP')
       return
     }
 
-    // Validate file size (5MB)
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
-      setError('La imagen no puede ser mayor a 5MB')
+      setError('La imagen no puede ser mayor a 5 MB')
       return
+    }
+
+    if (isProductImage) {
+      const REQUIRED = 800
+      const TOLERANCE = 10
+      const { width, height, ok } = await new Promise<{ width: number; height: number; ok: boolean }>((resolve) => {
+        const img = new Image()
+        const url = URL.createObjectURL(file)
+        img.onload = () => {
+          URL.revokeObjectURL(url)
+          const w = img.naturalWidth
+          const h = img.naturalHeight
+          const inRange = (n: number) => n >= REQUIRED - TOLERANCE && n <= REQUIRED + TOLERANCE
+          resolve({
+            width: w,
+            height: h,
+            ok: inRange(w) && inRange(h),
+          })
+        }
+        img.onerror = () => {
+          URL.revokeObjectURL(url)
+          resolve({ width: 0, height: 0, ok: false })
+        }
+        img.src = url
+      })
+      if (!ok) {
+        setError(
+          width && height
+            ? `La imagen debe ser 800×800 px (recibida: ${width}×${height} px)`
+            : 'La imagen debe ser 800×800 px. No se pudo leer el tamaño.'
+        )
+        return
+      }
     }
 
     setError(null)
@@ -104,7 +147,7 @@ export function ImageUpload({
   return (
     <div className={cn('space-y-2', className)}>
       <Label htmlFor={`image-upload-${bucket}`}>
-        {bucket === 'restaurant-logos' ? 'Logo del Restaurante' : 'Imagen del Producto'}
+        {label ?? (bucket === 'restaurant-logos' ? 'Logo del Restaurante' : 'Imagen del Producto')}
       </Label>
 
       <div className="flex items-start gap-4">
@@ -151,7 +194,7 @@ export function ImageUpload({
             ref={fileInputRef}
             type="file"
             id={`image-upload-${bucket}`}
-            accept="image/*"
+            accept={bucket === 'product-images' ? 'image/png,image/jpeg,image/webp' : 'image/*'}
             onChange={handleFileSelect}
             disabled={disabled || uploading}
             className="hidden"
@@ -176,7 +219,9 @@ export function ImageUpload({
             )}
           </Button>
           <p className="text-xs text-gray-500 mt-1">
-            PNG, JPG o WEBP. Máximo 5MB
+            {hintText ?? (bucket === 'product-images'
+              ? '800×800 px. PNG, JPG o WEBP. Máximo 5 MB.'
+              : 'PNG, JPG o WEBP. Máximo 5 MB')}
           </p>
         </div>
       </div>
@@ -188,32 +233,33 @@ export function ImageUpload({
         </div>
       )}
 
-      {/* URL Input (fallback) */}
-      <div className="pt-2 border-t border-gray-200">
-        <Label htmlFor={`image-url-${bucket}`} className="text-sm text-gray-600">
-          O ingresa una URL externa:
-        </Label>
-        <Input
-          id={`image-url-${bucket}`}
-          type="url"
-          placeholder="https://ejemplo.com/imagen.jpg"
-          className="mt-1"
-          disabled={disabled}
-          value={externalUrl}
-          onChange={(e) => {
-            const url = e.target.value.trim()
-            setExternalUrl(url)
-            if (url) {
-              setPreview(url)
-              onUrlChange?.(url)
-            } else if (!preview?.startsWith('data:')) {
-              // If clearing URL and no local preview, clear preview
-              setPreview(null)
-              onUrlChange?.('')
-            }
-          }}
-        />
-      </div>
+      {/* URL Input (solo si está permitido) */}
+      {allowExternalUrl && (
+        <div className="pt-2 border-t border-gray-200">
+          <Label htmlFor={`image-url-${bucket}`} className="text-sm text-gray-600">
+            O ingresa una URL externa:
+          </Label>
+          <Input
+            id={`image-url-${bucket}`}
+            type="url"
+            placeholder="https://ejemplo.com/imagen.jpg"
+            className="mt-1"
+            disabled={disabled}
+            value={externalUrl}
+            onChange={(e) => {
+              const url = e.target.value.trim()
+              setExternalUrl(url)
+              if (url) {
+                setPreview(url)
+                onUrlChange?.(url)
+              } else if (!preview?.startsWith('data:')) {
+                setPreview(null)
+                onUrlChange?.('')
+              }
+            }}
+          />
+        </div>
+      )}
     </div>
   )
 }

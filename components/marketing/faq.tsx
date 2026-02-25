@@ -20,9 +20,39 @@ const faqs = [
       'No. No cobramos comisiones por orden. Solo pagas una suscripción mensual fija. Esto significa que puedes recibir todas las órdenes que quieras sin pagar comisiones adicionales.',
   },
   {
-    question: '¿Puedo usar mi propio dominio?',
+    question: '¿Qué URL tendrá mi menú?',
     answer:
-      'Sí. En el plan Pro puedes conectar tu propio dominio personalizado. Esto te permite tener una URL como "ordenar.turestaurante.com" en lugar de usar nuestra URL predeterminada.',
+      'Cada restaurante tiene su propia URL como subdominio: [turestaurante].turestaurantedigital.com. Por ejemplo: lateburger.turestaurantedigital.com. No necesitas configurar dominios ni DNS; queda listo al registrarte.',
+  },
+  {
+    question: '¿Puedo cambiar de plan después?',
+    answer:
+      'Sí. Puedes pasar de Inicios (gratis) a Pro en cualquier momento desde tu panel. Si en el futuro quieres volver al plan gratuito, puedes hacerlo; tus datos se conservan.',
+  },
+  {
+    question: '¿Cómo funciona el menú digital y el código QR?',
+    answer:
+      'Creas tu menú en el panel, subes fotos y precios, y la plataforma genera un enlace único para tu restaurante. Descargas el código QR y lo imprimes o lo muestras en pantalla; tus clientes escanean y ven el menú al instante en el celular.',
+  },
+  {
+    question: '¿Qué incluye la integración con WhatsApp?',
+    answer:
+      'En el plan Pro, las órdenes pueden notificarse por WhatsApp para que las reciban directamente en tu número o en un grupo. Así gestionas pedidos sin depender solo de la pantalla de la cocina.',
+  },
+  {
+    question: '¿Hay límite de productos en el menú?',
+    answer:
+      'En el plan Inicios puedes publicar tu menú con los platos que necesites. En Pro no hay límite de productos ni de categorías; puedes tener entradas, platos fuertes, bebidas, postres y modificadores.',
+  },
+  {
+    question: '¿Cómo actualizo precios o platos?',
+    answer:
+      'Entras a tu panel, vas a Menú, y editas el producto (nombre, precio, descripción, foto). Los cambios se ven de inmediato en el menú que ven tus clientes. No hace falta avisar ni esperar.',
+  },
+  {
+    question: '¿Qué es el KDS (Pantalla de Cocina)?',
+    answer:
+      'Es la pantalla donde llegan los pedidos en tiempo real en el plan Pro. La cocina ve cada orden con ítems, notas y estado (nuevo, en preparación, listo), sin necesidad de imprimir tickets.',
   },
 ]
 
@@ -32,7 +62,7 @@ export function FAQ() {
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-3 sm:mb-4 leading-tight">
-            Preguntas <span className="text-[#FF6B00]">frecuentes</span>
+            Preguntas <span className="text-[#FF6B00]">Frecuentes</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Todo lo que necesitas saber sobre nuestra plataforma.

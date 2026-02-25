@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 const { spawn } = require('child_process');
+const path = require('path');
 const isWindows = process.platform === 'win32';
+const projectRoot = path.join(__dirname, '..');
+const nextBin = path.join(projectRoot, 'node_modules', '.bin', isWindows ? 'next.cmd' : 'next');
 
 // Configurar la variable de entorno según la plataforma
 const env = { ...process.env };
@@ -13,11 +16,10 @@ delete env.PROXY;
 env.NO_PROXY = 'localhost,127.0.0.1,::1';
 
 // Comando a ejecutar
-const command = isWindows ? 'next.cmd' : 'next';
 const args = ['build'];
 
 // Ejecutar el comando
-const child = spawn(command, args, {
+const child = spawn(nextBin, args, {
   env,
   stdio: 'inherit',
   shell: isWindows

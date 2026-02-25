@@ -13,9 +13,10 @@ import { useCart } from './cart-context'
 interface MenuClientProps {
   products: Product[]
   tenantId: string
+  slug: string
 }
 
-export function MenuClient({ products, tenantId }: MenuClientProps) {
+export function MenuClient({ products, tenantId, slug }: MenuClientProps) {
   const { setIsOpen } = useCart()
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isProductModalOpen, setIsProductModalOpen] = useState(false)
@@ -154,7 +155,7 @@ export function MenuClient({ products, tenantId }: MenuClientProps) {
         open={isCartOpen}
         onOpenChange={setIsCartOpen}
         tenantId={tenantId}
-        onOrderSuccess={() => setShowSuccess(true)}
+        slug={slug}
       />
 
       {/* Order Success */}
