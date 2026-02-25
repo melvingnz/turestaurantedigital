@@ -52,7 +52,7 @@ const DEFAULT_PRIMARY = '#FF5F1F'
  * Valores por defecto para campos no presentes en DB.
  */
 export function buildRestaurantConfig(
-  tenant: { id: string; name: string; logo_url: string | null; banner_url?: string | null; brand_color?: string | null; menu_description?: string | null } & Record<string, unknown>,
+  tenant: { id: string; name: string; logo_url: string | null; banner_url?: string | null; brand_color?: string | null; menu_description?: string | null },
   products: Array<{ id: string; name: string; description: string | null; price: number; image_url: string | null; category: string; is_available: boolean }>
 ): RestaurantConfig {
   const primaryColor = tenant.brand_color || DEFAULT_PRIMARY
