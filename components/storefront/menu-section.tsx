@@ -10,7 +10,7 @@ interface MenuSectionProps {
   searchQuery: string
   onSearchChange: (q: string) => void
   onProductClick: (product: Product) => void
-  sectionRef?: React.RefObject<HTMLDivElement | null>
+  sectionRef?: React.RefObject<HTMLElement | null>
 }
 
 export function MenuSection({
