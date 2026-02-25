@@ -23,7 +23,7 @@ export function MenuSection({
 }: MenuSectionProps) {
   return (
     <section
-      ref={sectionRef ?? undefined}
+      ref={sectionRef as React.RefObject<HTMLElement> | undefined}
       id="menu-section"
       className="w-full py-8 md:py-12 scroll-mt-24"
     >
