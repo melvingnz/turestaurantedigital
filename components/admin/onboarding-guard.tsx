@@ -3,7 +3,8 @@
 import React, { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-type TenantLike = { logo_url?: string | null } | null
+/** Accepts AuthTenant or any object with optional logo_url (for onboarding check). */
+type TenantLike = { logo_url?: string | null; [k: string]: unknown } | null
 
 export function OnboardingGuard({
   tenant,
@@ -17,7 +18,8 @@ export function OnboardingGuard({
 
   useEffect(() => {
     if (!tenant || pathname === '/app/onboarding') return
-    const hasLogo = !!tenant.logo_url && String(tenant.logo_url).trim() !== ''
+    const logoUrl = tenant.logo_url != null ? String(tenant.logo_url) : ''
+    const hasLogo = logoUrl.trim() !== ''
     if (!hasLogo) {
       router.replace('/app/onboarding')
     }
