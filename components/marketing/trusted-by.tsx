@@ -8,7 +8,7 @@ import type { Tenant } from '@/types/database'
 const DEFAULT_BRAND_COLOR = '#FF5F1F'
 
 interface TrustedByProps {
-  tenants: Tenant[]
+  tenants?: Tenant[]
 }
 
 function RestaurantCard({ tenant }: { tenant: Tenant }) {
@@ -79,7 +79,7 @@ function RestaurantCard({ tenant }: { tenant: Tenant }) {
   )
 }
 
-export function TrustedBy({ tenants }: TrustedByProps) {
+export function TrustedBy({ tenants = [] }: TrustedByProps) {
   return (
     <section className="w-full bg-gray-50 py-8 sm:py-12 md:py-14 lg:py-16 overflow-hidden">
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
