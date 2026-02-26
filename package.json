@@ -18,7 +18,8 @@
     "audit:fix": "npm audit fix",
     "db:update": "node scripts/db-update.js",
     "check:service-role": "node scripts/check-service-role.js",
-    "confirmation-urls": "node scripts/print-confirmation-urls.js"
+    "confirmation-urls": "node scripts/print-confirmation-urls.js",
+    "seed:prueba": "node scripts/seed-products-prueba.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",

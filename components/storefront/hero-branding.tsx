@@ -12,7 +12,7 @@ export function HeroBranding({ config }: HeroBrandingProps) {
   return (
     <section className="w-full border-b border-gray-100 overflow-hidden">
       {config.coverImageUrl ? (
-        <div className="relative w-full aspect-[21/9] min-h-[160px] max-h-[320px] bg-gray-100">
+        <div className="relative w-full aspect-[2/1] sm:aspect-[21/9] min-h-[120px] max-h-[180px] sm:min-h-[160px] sm:max-h-[320px] bg-gray-100">
           <img
             src={config.coverImageUrl}
             alt="Banner del restaurante"
@@ -21,7 +21,7 @@ export function HeroBranding({ config }: HeroBrandingProps) {
         </div>
       ) : (
         <div
-          className="w-full aspect-[21/9] min-h-[160px] max-h-[280px]"
+          className="w-full aspect-[2/1] sm:aspect-[21/9] min-h-[120px] max-h-[180px] sm:min-h-[160px] sm:max-h-[280px]"
           style={{
             background: `linear-gradient(135deg, ${config.primaryColor}18 0%, ${config.primaryColor}06 100%)`,
           }}

@@ -20,6 +20,15 @@ function getEmailRedirectTo(): string {
   return `${base.replace(/\/$/, '')}${CONFIRM_PATH}`
 }
 
+function getResetPasswordRedirectTo(): string {
+  const isProd = process.env.NODE_ENV === 'production'
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  const base = isProd
+    ? (fromEnv && !fromEnv.includes('localhost') ? fromEnv : PRODUCTION_SITE_URL)
+    : (fromEnv || 'http://localhost:3000')
+  return `${base.replace(/\/$/, '')}/reset-password`
+}
+
 export interface SignupData {
   email: string
   password: string
@@ -226,6 +235,30 @@ export async function signIn(email: string, password: string) {
     success: false,
     error: 'No se pudo iniciar sesión',
   }
+}
+
+/**
+ * Solicitar restablecimiento de contraseña (envía email con enlace)
+ */
+export async function requestPasswordReset(email: string): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient()
+  const redirectTo = getResetPasswordRedirectTo()
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo,
+  })
+
+  if (error) {
+    logger.error('[Auth] requestPasswordReset error', { message: error.message, email: email.replace(/^(.{2}).*@/, '$1***@') })
+    return {
+      success: false,
+      error: error.message === 'Email not confirmed'
+        ? 'Confirma tu correo antes de solicitar el restablecimiento.'
+        : error.message || 'No se pudo enviar el correo. Revisa la dirección e intenta de nuevo.',
+    }
+  }
+
+  return { success: true }
 }
 
 /**

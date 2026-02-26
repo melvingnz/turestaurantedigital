@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
 import { ProductForm } from '@/components/admin/product-form'
-import { Plus, Edit, Eye, EyeOff, Image as ImageIcon, UtensilsCrossed, Filter } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff, Image as ImageIcon, UtensilsCrossed, Filter } from 'lucide-react'
 import type { Product } from '@/types/database'
 
 interface MenuClientProps {
@@ -65,6 +65,21 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
     setIsFormOpen(true)
   }
 
+  const handleDelete = async (product: Product) => {
+    if (!confirm(`¿Eliminar "${product.name}"? Esta acción no se puede deshacer.`)) return
+    try {
+      const response = await fetch(`/api/products/${product.id}`, { method: 'DELETE' })
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.message || 'Error al eliminar')
+      }
+      await refreshProducts()
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      alert(error instanceof Error ? error.message : 'Error al eliminar el producto')
+    }
+  }
+
   const handleNewProduct = () => {
     setEditingProduct(null)
     setIsFormOpen(true)
@@ -91,28 +106,28 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Menú</h1>
-          <p className="text-gray-600 mt-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Gestión de Menú</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">
             Administra los productos de tu menú. Oculta productos temporalmente sin eliminarlos.
           </p>
         </div>
-        <Button onClick={handleNewProduct} className="bg-[#FF5F1F] hover:bg-[#FF5F1F]/90">
+        <Button onClick={handleNewProduct} className="w-full sm:w-auto shrink-0 bg-[#FF5F1F] hover:bg-[#FF5F1F]/90">
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Producto
         </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-2">
-        <Filter className="h-4 w-4 text-gray-500" />
-        <span className="text-sm font-medium text-gray-700">Filtrar:</span>
+      {/* Filters: wrap en móvil para que no se corte "Ocultos (N)" */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Filter className="h-4 w-4 shrink-0 text-gray-500" />
+        <span className="text-sm font-medium text-gray-700 shrink-0">Filtrar:</span>
         <Button
           variant={filter === 'all' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setFilter('all')}
-          className={filter === 'all' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+          className={`shrink-0 ${filter === 'all' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}`}
         >
           Todos ({products.length})
         </Button>
@@ -120,7 +135,7 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
           variant={filter === 'available' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setFilter('available')}
-          className={filter === 'available' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+          className={`shrink-0 ${filter === 'available' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}`}
         >
           Disponibles ({products.filter((p) => p.is_available).length})
         </Button>
@@ -128,7 +143,7 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
           variant={filter === 'unavailable' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setFilter('unavailable')}
-          className={filter === 'unavailable' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}
+          className={`shrink-0 ${filter === 'unavailable' ? 'bg-[#FF5F1F] hover:bg-[#FF5F1F]/90' : ''}`}
         >
           Ocultos ({products.filter((p) => !p.is_available).length})
         </Button>
@@ -248,6 +263,15 @@ export function MenuClient({ initialProducts, tenantId }: MenuClientProps) {
                         title="Editar producto"
                       >
                         <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(product)}
+                        title="Eliminar producto"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

@@ -7,12 +7,9 @@ import {
   UtensilsCrossed,
   ShoppingCart,
   Settings,
-  Menu as MenuIcon,
-  X,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/ui/logo'
@@ -31,42 +28,16 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed = false, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname()
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
   const showCollapseToggle = !!onToggleCollapse
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="bg-white"
-        >
-          {isMobileOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <MenuIcon className="h-5 w-5" />
-          )}
-        </Button>
-      </div>
-
-      {/* Mobile overlay */}
-      {isMobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Sidebar: solo visible en desktop (lg). En móvil se usa la barra inferior.) */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-200 lg:translate-x-0',
+          'fixed top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-200 hidden lg:block',
           'w-64',
-          collapsed && 'lg:w-20',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          collapsed && 'lg:w-20'
         )}
       >
         <div className="flex flex-col h-full">
@@ -100,7 +71,6 @@ export function Sidebar({ collapsed = false, onToggleCollapse }: SidebarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setIsMobileOpen(false)}
                   title={collapsed ? item.name : undefined}
                   className={cn(
                     'flex items-center rounded-lg text-sm font-medium transition-colors',

@@ -84,9 +84,9 @@ export function StorefrontClient({ tenant, products }: StorefrontClientProps) {
         <QuickInfoBar config={config} />
 
         {tenant.menu_description?.trim() && (
-          <div className="px-4 md:px-6 py-6 md:py-8 bg-white border-b border-gray-100">
+          <div className="px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8 bg-white border-b border-gray-100">
             <div className="container mx-auto max-w-3xl text-center">
-              <p className="text-gray-700 text-base md:text-lg leading-relaxed whitespace-pre-line">
+              <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed whitespace-pre-line">
                 {tenant.menu_description.trim()}
               </p>
             </div>

@@ -7,7 +7,9 @@ import { supabase } from '@/lib/supabase/client'
 import { updateOrderStatus } from '@/app/actions/orders'
 import { useSound } from '@/hooks/use-sound'
 import type { OrderWithItems, OrderStatus } from '@/types/database'
-import { Bell } from 'lucide-react'
+import { Bell, RefreshCw } from 'lucide-react'
+
+const POLL_INTERVAL_MS = 8_000 // 8 segundos: no depender de Realtime; cocina siempre ve estado reciente
 
 interface OrdersClientProps {
   initialOrders: OrderWithItems[]
@@ -20,7 +22,61 @@ export function OrdersClient({ initialOrders, tenantId }: OrdersClientProps) {
   const [orders, setOrders] = useState<OrderWithItems[]>(initialOrders)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [isConnected, setIsConnected] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const { playSound } = useSound()
+
+  // Refresh pedidos desde el servidor (polling + botón manual)
+  const refreshOrders = useCallback(async () => {
+    setIsRefreshing(true)
+    try {
+      const res = await fetch('/api/app/orders')
+      if (!res.ok) return
+      const data: OrderWithItems[] = await res.json()
+      setOrders(data)
+    } catch (e) {
+      console.error('Error refreshing orders:', e)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }, [])
+
+  // Polling solo cuando la pestaña está visible; al volver a la pestaña, refrescar de inmediato
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval> | null = null
+
+    const runPoll = () => {
+      if (document.visibilityState === 'visible') refreshOrders()
+    }
+
+    const startPolling = () => {
+      if (timer) return
+      runPoll()
+      timer = setInterval(runPoll, POLL_INTERVAL_MS)
+    }
+
+    const stopPolling = () => {
+      if (timer) {
+        clearInterval(timer)
+        timer = null
+      }
+    }
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshOrders() // al volver, sincronizar de inmediato
+        startPolling()
+      } else {
+        stopPolling()
+      }
+    }
+
+    if (document.visibilityState === 'visible') startPolling()
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      stopPolling()
+    }
+  }, [refreshOrders])
 
   // Filter and sort orders by status and time
   const filteredOrders = orders
@@ -33,24 +89,28 @@ export function OrdersClient({ initialOrders, tenantId }: OrdersClientProps) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     })
 
-  // Handle status update
+  // Handle status update: optimista + refresco desde servidor para evitar desincronía por delay
   const handleStatusUpdate = useCallback(
     async (orderId: string, newStatus: OrderStatus) => {
+      // 1. Optimista: la UI responde al instante
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      )
       try {
         await updateOrderStatus(orderId, newStatus)
-        
-        // Optimistically update local state
-        setOrders((prev) =>
-          prev.map((order) =>
-            order.id === orderId ? { ...order, status: newStatus } : order
-          )
-        )
+        // 2. Breve pausa para que el servidor persista; luego refresco para evitar desincronía
+        await new Promise((r) => setTimeout(r, 400))
+        await refreshOrders()
       } catch (error) {
         console.error('Error updating order status:', error)
+        // Revertir optimista en caso de error
+        await refreshOrders()
         alert('Error al actualizar el estado del pedido')
       }
     },
-    []
+    [refreshOrders]
   )
 
   // Set up real-time subscription
@@ -144,29 +204,36 @@ export function OrdersClient({ initialOrders, tenantId }: OrdersClientProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">Pedidos en Vivo</h1>
-            <div className="flex items-center gap-2">
-              <div
-                className={`h-3 w-3 rounded-full ${
-                  isConnected ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-                }`}
-              />
-              <span className="text-sm text-gray-600">
-                {isConnected ? 'Conectado' : 'Desconectado'}
-              </span>
-            </div>
-          </div>
-          <p className="text-gray-600 mt-1">
-            Sistema de visualización de cocina en tiempo real
-          </p>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Pedidos en Vivo</h1>
+        <div className="flex items-center gap-2 mt-1">
+          <div
+            className={`h-3 w-3 rounded-full shrink-0 ${
+              isConnected ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
+            }`}
+          />
+          <span className="text-sm text-gray-600">
+            {isConnected ? 'Tiempo real' : 'Actualizando cada 8 s'}
+          </span>
         </div>
+        <p className="text-gray-600 mt-1">
+          Sistema de visualización de cocina en tiempo real
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={refreshOrders}
+          disabled={isRefreshing}
+          className="gap-2 mt-3"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Actualizar
+        </Button>
       </div>
 
-      {/* Status Filter Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
+      {/* Status Filter Tabs: wrap en móvil para que no haya scroll ni se peguen al borde */}
+      <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-0">
         {statusTabs.map((tab) => (
           <Button
             key={tab.id}

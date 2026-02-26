@@ -23,13 +23,13 @@ export default function AccountConfirmedPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center">
-              <Logo />
+              <Logo nav />
             </Link>
             <Link
               href="/marketing/login"
               className="text-sm text-[#1A1A1A]/70 hover:text-[#FF6B00] transition-colors"
             >
-              Iniciar sesión
+              Iniciar Sesión
             </Link>
           </div>
         </div>

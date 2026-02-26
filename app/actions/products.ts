@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerClient } from '@/lib/supabase/server'
+import { getAuthTenant } from '@/lib/auth'
 import type { Product, ProductInsert, ProductUpdate } from '@/types/database'
 import { logger } from '@/lib/logger'
 
@@ -107,11 +108,24 @@ export async function updateProduct(
 }
 
 /**
- * Delete a product
+ * Delete a product (solo si pertenece al tenant del usuario autenticado)
  */
 export async function deleteProduct(id: string): Promise<void> {
+  const tenant = await getAuthTenant()
+  if (!tenant) {
+    throw new Error('No autorizado')
+  }
+
   const supabase = await createServerClient()
-  
+  const product = await getProduct(id)
+  if (!product) {
+    throw new Error('Producto no encontrado')
+  }
+  if (product.tenant_id !== tenant.id) {
+    logger.warn('[Products] Delete rejected: product belongs to another tenant', { id, tenantId: tenant.id })
+    throw new Error('No puedes eliminar este producto')
+  }
+
   const { error } = await supabase
     .from('products')
     .delete()
@@ -120,7 +134,7 @@ export async function deleteProduct(id: string): Promise<void> {
 
   if (error) {
     logger.error('[Products] Error deleting product', { id, code: error.code, message: error.message })
-    throw new Error(`Failed to delete product: ${error.message}`)
+    throw new Error(`Error al eliminar: ${error.message}`)
   }
 }
 

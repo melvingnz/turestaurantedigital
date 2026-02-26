@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,12 +9,15 @@ import { Card } from '@/components/ui/card'
 import { Logo } from '@/components/ui/logo'
 import { signIn } from '@/app/actions/auth'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const resetOk = searchParams.get('reset') === 'ok'
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -53,7 +56,7 @@ export default function LoginPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center">
-              <Logo />
+              <Logo nav />
             </Link>
             <Link
               href="/marketing/signup"
@@ -69,11 +72,17 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#FAFAFA]">
         <Card className="w-full max-w-md p-8 border border-[#E5E5E5] shadow-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Iniciar sesión</h1>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">Iniciar Sesión</h1>
             <p className="text-[#1A1A1A]/70">
               Accede a tu panel de control
             </p>
           </div>
+
+          {resetOk && (
+            <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md text-sm mb-6">
+              Contraseña actualizada. Ya puedes iniciar sesión con tu nueva contraseña.
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
@@ -93,15 +102,31 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Tu contraseña"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-                disabled={loading}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Tu contraseña"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  disabled={loading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1A1A1A]/50 hover:text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B00] rounded p-1"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Error Message */}
@@ -123,7 +148,7 @@ export default function LoginPage() {
                   Iniciando sesión...
                 </>
               ) : (
-                'Iniciar sesión'
+                'Iniciar Sesión'
               )}
             </Button>
 

@@ -83,7 +83,7 @@ const pwd = validatePassword(formData.password)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center">
-              <Logo />
+              <Logo nav />
             </Link>
             <Link
               href="/marketing/login"

@@ -87,9 +87,9 @@ export function ProductModal({
                   {formatPrice(product.price)}
                 </div>
               </SheetHeader>
-              <div className="mt-6 space-y-2">
+              <div className="mt-6 space-y-2 flex flex-col items-center">
                 <Label>Cantidad</Label>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center gap-4">
                   <Button
                     type="button"
                     variant="outline"

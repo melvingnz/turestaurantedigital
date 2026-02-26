@@ -105,7 +105,7 @@ function ConfirmEmailContent() {
               href="/marketing/login"
               className="text-sm text-[#1A1A1A]/70 hover:text-[#FF6B00] transition-colors"
             >
-              Iniciar sesión
+              Iniciar Sesión
             </Link>
           </div>
         </div>

@@ -25,7 +25,7 @@ export function ProductCard({ product, primaryColor, onProductClick }: ProductCa
     <button
       type="button"
       onClick={() => onProductClick(product)}
-      className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 text-left group hover:border-gray-300 w-full"
+      className="bg-white rounded-lg sm:rounded-xl border-2 border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 text-left group hover:border-gray-300 w-full"
     >
       <div className="aspect-[4/3] relative bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
         {product.image_url ? (
@@ -52,17 +52,17 @@ export function ProductCard({ product, primaryColor, onProductClick }: ProductCa
           style={{ backgroundColor: SECONDARY_COLOR }}
         />
       </div>
-      <div className="p-4 md:p-5">
-        <h3 className="font-bold text-lg md:text-xl text-gray-900 mb-2 line-clamp-2">
+      <div className="p-3 sm:p-4 md:p-5">
+        <h3 className="font-bold text-sm sm:text-lg md:text-xl text-gray-900 mb-1 sm:mb-2 line-clamp-2">
           {product.name}
         </h3>
         {product.description && (
-          <p className="text-sm md:text-base text-gray-600 mb-3 line-clamp-2">
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 line-clamp-2">
             {product.description}
           </p>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-xl md:text-2xl font-bold" style={{ color: primaryColor }}>
+          <span className="text-base sm:text-xl md:text-2xl font-bold" style={{ color: primaryColor }}>
             {formatPrice(product.price)}
           </span>
         </div>

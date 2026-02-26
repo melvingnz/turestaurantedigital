@@ -28,7 +28,7 @@ export function Hero() {
               para tu restaurante.
             </h1>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#1A1A1A]/70 leading-snug sm:leading-relaxed">
-              Brinda a tus clientes un portal web premium para ordenar como ellos prefieran: para comer aquí, para llevar o a domicilio.
+              La forma más sencilla de que tus clientes te pidan: desde el celular, para comer aquí, llevar o delivery. Hecho para tu restaurante.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 md:gap-4 justify-center lg:justify-start">
               <Link href="#pricing" className="w-full sm:w-auto">

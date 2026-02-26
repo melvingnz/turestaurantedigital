@@ -5,7 +5,7 @@ const ALT = 'Tu Restaurante Digital'
 
 interface LogoProps {
   className?: string
-  /** Navbar: texto TRD sin imagen para evitar cuadro blanco */
+  /** Navbar: logo de marca (imagen) */
   nav?: boolean
   /** Sidebar expanded: logo only, centered, h-10 */
   compact?: boolean
@@ -13,17 +13,17 @@ interface LogoProps {
   logoOnly?: boolean
 }
 
-/** Logo tipo TRD para navbar: sin imagen, sin fondo */
+/** Logo de marca para navbar: mismo tamaño en todas las páginas (login, marketing, confirmación, etc.) */
+const NAV_LOGO_HEIGHT = 'h-9' // 36px — tamaño único para headers
 function NavLogo({ className }: { className?: string }) {
   return (
-    <span
-      className={`inline-flex items-baseline font-bold text-xl sm:text-2xl tracking-tight text-[#1A1A1A] select-none ${className || ''}`}
-      aria-label={ALT}
-    >
-      <span>T</span>
-      <span className="text-[#FF6B00]">R</span>
-      <span>D</span>
-    </span>
+    <img
+      src={LOGO_SRC}
+      alt={ALT}
+      width={120}
+      height={36}
+      className={`${NAV_LOGO_HEIGHT} w-auto object-contain object-left select-none ${className || ''}`}
+    />
   )
 }
 

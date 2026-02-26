@@ -28,9 +28,9 @@ export function StorefrontFooter({ config }: StorefrontFooterProps) {
   const contactPhone = config.phone?.trim() || '+1 (809) 555-0123'
 
   return (
-    <footer className="mt-auto bg-gray-100 text-gray-800 py-8">
+    <footer className="mt-auto bg-gray-100 text-gray-800 py-3">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-        <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+        <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           <button type="button" onClick={scrollToMenu} className={linkClass}>
             Menú
           </button>
@@ -58,7 +58,7 @@ export function StorefrontFooter({ config }: StorefrontFooterProps) {
           </Link>
         </nav>
 
-        <div className="mt-3 pt-3 border-t border-gray-200 flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
+        <div className="mt-2 pt-2 border-t border-gray-200 flex flex-col items-center gap-1 sm:flex-row sm:justify-between">
           <p className="text-xs text-gray-500">© {year} {displayName}</p>
           <p className="text-xs text-gray-500">Powered by {BRAND_NAME}</p>
         </div>
