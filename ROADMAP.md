@@ -14,6 +14,8 @@
 4. [Estado Actual](#estado-actual)
 5. [Fases de Desarrollo](#fases-de-desarrollo)
 6. [Flujos Críticos](#flujos-críticos)
+7. [Próximos Puntos Críticos](#próximos-puntos-críticos)
+8. [Qué implementar y por qué](#qué-implementar-y-por-qué)
 
 ---
 
@@ -198,23 +200,27 @@ El sistema está dividido en **3 portales independientes** usando Next.js Route 
 
 ### ❌ No Implementado
 
-1. **Modificadores y Variantes en Menu Builder**
+1. **Factura por orden**
+   - Una factura por cada orden (imprimir, N copias con "Copia X de N")
+   - Ver [Próximos Puntos Críticos → Factura por orden](#-crítico-1-factura-por-orden)
+
+2. **Modificadores y Variantes en Menu Builder**
    - Modificadores (ej: "Bacon" +RD$ 50)
    - Variantes (ej: "Tamaño: Pequeño/Mediano/Grande")
    - Ordenamiento de productos (drag & drop)
    - Duplicar producto
 
-2. **Notificaciones WhatsApp**
+3. **Notificaciones WhatsApp**
    - Integración con API de WhatsApp Business
    - Templates de mensajes
    - Notificaciones automáticas de nuevas órdenes
 
-3. **Sistema de Pagos**
+4. **Sistema de Pagos**
    - Integración con pasarelas de pago (Stripe, PayPal)
    - Pagos en línea
    - Historial de transacciones
 
-4. **Exportación de Reportes**
+5. **Exportación de Reportes**
    - Exportar métricas a CSV
    - Reportes personalizados
 
@@ -375,6 +381,7 @@ Producto: "Doble Queso Burger"
 - [x] Notificación de sonido (básico)
 
 **Tareas Pendientes:**
+- [ ] **Factura por orden** (ver [Próximos Puntos Críticos](#próximos-puntos-críticos)): imprimir factura con N copias (Copia 1 de N)
 - [ ] Optimización para pantallas grandes (TVs en cocina)
 - [ ] Filtros avanzados (por estado, por hora)
 - [ ] Modo oscuro para cocina
@@ -382,6 +389,16 @@ Producto: "Doble Queso Burger"
 - [ ] Sonido de notificación mejorado
 
 **Prioridad:** 🟢 **BAJA** (Funcional, mejoras opcionales)
+
+#### 3.3.1 Factura por orden 🔴 **PENDIENTE (Crítico)**
+
+**Objetivo:** Que cada orden tenga una factura imprimible y se pueda elegir el número de copias (ej. Copia 1 de 3).
+
+**Requisitos detallados:** Ver sección [Próximos Puntos Críticos → Factura por orden](#-crítico-1-factura-por-orden).
+
+**Resumen:** Una factura por orden (número, fecha, cliente, ítems, total, datos del restaurante); botón "Imprimir factura" con selector de número de copias; cada copia con texto "Copia X de N". Integrado en `/app/orders`.
+
+---
 
 #### 3.4 Configuración ✅ **COMPLETO**
 
@@ -566,13 +583,113 @@ export async function signupWithTenant(data: SignupData): Promise<SignupResult> 
 
 ### Prioridad 🟢 BAJA
 
-7. **Optimizaciones de KDS**
+9. **Optimizaciones de KDS**
    - Pantallas grandes
    - Filtros avanzados
 
-8. **Notificaciones WhatsApp**
+10. **Notificaciones WhatsApp**
    - Integración con API
    - Templates de mensajes
+
+---
+
+## 🎯 PRÓXIMOS PUNTOS CRÍTICOS
+
+Resumen de lo que debemos atacar a corto plazo para producción y operación diaria del restaurante.
+
+### 🔴 Crítico 1: Factura por orden
+
+**Objetivo:** Por cada orden que entre debe existir una factura imprimible, con soporte para múltiples copias (cliente, cocina, contabilidad, etc.).
+
+**Requisitos:**
+- [ ] **Una factura por orden:** Cada orden tiene asociada una factura (número único, fecha, datos del tenant).
+- [ ] **Contenido:** Número de orden, fecha/hora, cliente (nombre, teléfono), tipo (delivery/pickup), ítems con cantidades y precios, subtotal, total, datos del restaurante (nombre, dirección/RNC si aplica).
+- [ ] **Impresión:** Acción "Imprimir factura" desde la vista de la orden (KDS/Pedidos) o desde el detalle de la orden. Abre vista de impresión o PDF.
+- [ ] **Número de copias:** Selector de "Número de copias" (ej. 1, 2, 3). Al imprimir se generan N copias con indicador "Copia 1 de 3", "Copia 2 de 3", etc., para repartir (cliente, cocina, archivo).
+- [ ] **Diseño:** Hoja estándar (A4 o ticket), legible y con branding del restaurante (logo, nombre).
+
+**Ubicación en la app:** Integrado en `/app/orders` (botón por orden o en detalle) y/o modal de detalle de orden con "Imprimir factura (X copias)".
+
+**Prioridad:** 🔴 **ALTA** (necesario para operación real del restaurante)
+
+---
+
+### 🔐 Crítico 2: Puntos de seguridad
+
+Refuerzos de seguridad antes de escalar o exponer más tráfico.
+
+- [ ] **Variables de entorno:** Revisar que no haya secrets en cliente; `NEXT_PUBLIC_*` solo para datos no sensibles. Service Role Key y JWT secret solo en servidor.
+- [ ] **Auth y sesión:** Revisar caducidad de sesión, refresh token y logout en todos los dispositivos (opcional). Confirmar que las rutas `/app/*` y APIs internas validan siempre `requireAuth` / tenant del usuario.
+- [ ] **APIs y Server Actions:** Todas las acciones que modifican datos (órdenes, productos, tenant) deben verificar `tenant_id` del usuario autenticado; no confiar en IDs enviados por el cliente sin validación.
+- [ ] **Rate limiting:** Considerar límite de peticiones en login, signup, "olvidé contraseña" y en creación de órdenes (storefront) para evitar abuso y bots.
+- [ ] **RLS y backups:** Confirmar que RLS está activo en todas las tablas sensibles; documentar política de backups de Supabase (retención, restauración).
+- [ ] **HTTPS y cookies:** En producción todo por HTTPS; cookies de sesión con `Secure`, `SameSite` adecuado.
+
+**Prioridad:** 🔴 **ALTA** (antes de crecimiento de usuarios/tenants)
+
+---
+
+### 🟡 Crítico 3: Otros a corto plazo
+
+- [ ] **Recuperación de contraseña:** Flujo completo probado en producción (email de reset, redirect, uso de token único).
+- [ ] **Estabilidad del build:** Mantener build de Vercel verde (evitar `useSearchParams` sin Suspense u otros bailouts de prerender).
+- [ ] **Notificaciones al restaurante:** Aunque no sea WhatsApp aún, definir cómo se notifica una nueva orden (email, sonido en KDS, etc.) para no perder pedidos.
+
+---
+
+## 📌 QUÉ IMPLEMENTAR Y POR QUÉ
+
+Según el sistema que queremos (canal directo del restaurante sin comisiones, operación diaria en cocina y cumplimiento legal/operativo), estas son las cosas que debemos implementar y la razón de cada una.
+
+### Operación diaria del restaurante
+
+| Qué implementar | Por qué |
+|-----------------|--------|
+| **Factura por orden (imprimir + N copias)** | Cada pedido que entra debe tener comprobante: para el cliente, para cocina y para contabilidad. Sin factura imprimible (y opción de copias) el restaurante no puede operar de forma seria ni cumplir expectativas de auditoría o fiscalidad. |
+| **Notificación al restaurante cuando llega una orden** | El flujo de valor es "cliente ordena → restaurante recibe y prepara". Si el restaurante no se entera a tiempo (sonido en KDS, email o WhatsApp), se pierden pedidos y se rompe la confianza en el canal directo. |
+| **Estados de orden claros (Pendiente → En cocina → Listo → Entregado)** | Ya está; mantenerlo. Permite que cocina y repartidor se coordinen y que el cliente sepa en qué etapa está su pedido si en el futuro mostramos estado al cliente. |
+
+### Experiencia del cliente en el storefront
+
+| Qué implementar | Por qué |
+|-----------------|--------|
+| **Checkout sin cuenta obligatoria** | Ya está. El canal directo debe tener fricción mínima: nombre + teléfono + tipo de entrega es suficiente para que el restaurante ejecute el pedido. |
+| **Menú con categorías y precios visibles** | Ya está. Es la base para que el cliente ordene sin llamar; sin esto no hay sustitución real a UberEats/Rappi en pedidos recurrentes. |
+| **Modificadores y variantes (opcional pero recomendado)** | Muchos platos tienen opciones (extra queso, tamaño). Sin modificadores, el menú digital no refleja la oferta real y el restaurante sigue dependiendo de llamadas o anotaciones a mano. |
+
+### Panel del restaurante (Admin)
+
+| Qué implementar | Por qué |
+|-----------------|--------|
+| **KDS en tiempo real (órdenes vivas)** | Ya está. La cocina debe ver los pedidos al instante; si no, el sistema no sirve como reemplazo operativo del teléfono o de otras apps. |
+| **Dashboard con ventas (hoy, semana, mes)** | Ya está. El dueño necesita ver si el canal directo está generando ventas; sin métricas no hay forma de medir el valor del producto. |
+| **Configuración de branding (nombre, logo, color, slug)** | Ya está. Cada restaurante debe tener su propia tienda reconocible; sin eso no hay "tu propio canal". |
+| **Gestión de menú (productos, categorías, ocultar/mostrar)** | Ya está. El menú debe ser editable por el restaurante sin depender del proveedor; es parte del control que se les vende. |
+
+### Seguridad y confiabilidad
+
+| Qué implementar | Por qué |
+|-----------------|--------|
+| **RLS y aislamiento por tenant** | Ya está. En un SaaS multi-tenant, un restaurante no puede ver datos de otro. Sin RLS estricto hay riesgo legal y de pérdida de confianza. |
+| **Validar tenant en todas las acciones (órdenes, productos, configuración)** | Las APIs y Server Actions deben comprobar que el usuario solo actúa sobre su `tenant_id`. Si se confía en IDs que vienen del cliente, un atacante podría ver o modificar datos de otros restaurantes. |
+| **Variables de entorno y secrets solo en servidor** | La Service Role Key y JWT secret no deben exponerse al cliente. Exponerlas permitiría leer o modificar cualquier dato en Supabase. |
+| **Rate limiting (login, signup, recuperar contraseña, crear orden)** | Evita abuso: fuerza bruta en login, spam de registros, bombardeo de órdenes falsas. Sin límites el sistema es vulnerable y el costo (Supabase, Vercel) puede dispararse. |
+| **HTTPS y cookies seguras en producción** | La sesión no debe viajar en claro ni ser susceptible a robo por red. Cookies con `Secure` y `SameSite` reducen riesgo de suplantación. |
+| **Recuperación de contraseña probada en producción** | Los dueños olvidan contraseñas; si el flujo de "olvidé contraseña" falla, pierden acceso al panel y el soporte se vuelve crítico. |
+
+### Crecimiento y escalabilidad del producto
+
+| Qué implementar | Por qué |
+|-----------------|--------|
+| **Build estable (Vercel verde, sin bailouts de prerender)** | Cada fallo de build retrasa despliegues y correcciones. Un pipeline estable es base para iterar rápido y dar confianza al cliente. |
+| **Notificaciones WhatsApp (cuando sea posible)** | El piloto (Late Burger) espera recibir el pedido por WhatsApp. Es el siguiente paso natural para que el restaurante no dependa de tener el KDS abierto todo el tiempo. |
+| **Exportación de reportes (CSV) y/o facturación por período** | Los restaurantes necesitan llevar números a contabilidad o socios. Sin exportar datos, el producto queda limitado a "ver en pantalla" y no sustituye hojas de cálculo. |
+
+### Resumen de prioridad según el sistema
+
+- **Crítico para operar hoy:** Factura por orden, notificación de nueva orden, seguridad (tenant, env, rate limit, HTTPS/cookies), recuperación de contraseña.
+- **Crítico para vender y retener:** Dashboard, KDS, configuración, menú, storefront (ya cubiertos en buena parte).
+- **Siguiente paso de valor:** WhatsApp, modificadores/variantes, exportación de reportes.
 
 ---
 
@@ -846,5 +963,6 @@ Actualmente, Late Burger usa imágenes hardcodeadas en `/public/images/` como so
 
 ---
 
-**Última Actualización:** 2026  
-**Mantenido por:** Equipo de Desarrollo - Tu Restaurante Digital
+**Última Actualización:** Febrero 2026  
+**Mantenido por:** Equipo de Desarrollo - Tu Restaurante Digital  
+**Cambios recientes en ROADMAP:** Añadida sección [Qué implementar y por qué](#qué-implementar-y-por-qué): qué debemos implementar según el sistema (operación, storefront, admin, seguridad, escalabilidad) y la razón de cada uno. Índice actualizado con punto 8.
